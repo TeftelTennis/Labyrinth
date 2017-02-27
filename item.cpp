@@ -1,5 +1,6 @@
 #include "item.h"
 
+using namespace std;
 
 Item::Item() {
     //image = new Texture();
@@ -10,7 +11,7 @@ Item::Item() {
             return "item: " + name;
         };
     infoWindow = [](int windowID) {
-        GUILayout.Label("--EMPTY--");
+    //    GUILayout.Label("--EMPTY--");
     };
     hitPlayer = [](Player player, Labyrinth field) {};
     use = [](Plyer player, Labyrinth field) {};

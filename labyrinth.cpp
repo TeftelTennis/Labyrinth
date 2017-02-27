@@ -1,4 +1,9 @@
 #include "labyrinth.h"
+#include <string>
+#include <vector>
+#include <functional>
+
+using namespace std;
 
 #pragma strict
 /*
@@ -64,18 +69,14 @@ void Direction::reverse() {
 LabyrinthObject::LabyrinthObject() {
     type = TYPE_EMPTY;
     name = "empty";
-    tostring = []() {
-        return name;
-    };
+    function<string (void)> tostring = []() { return name; };
 
 }
 
-function LabyrinthObject::remove() {
+void LabyrinthObject::remove() {
     type = TYPE_EMPTY;
     name = "empty";
-    tostring = []() {
-        return name;
-    };
+    function<string (void)> tostring = []() { return name; };
 }
 
 int Player::itemCount(int itemType) {
@@ -139,6 +140,7 @@ int Player::ammo() {
     return itemCount(Bullet());
 }
 
+
 DSU::DSU(int w, int h) {
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
@@ -171,292 +173,263 @@ void DSU::merge(int i1, int j1, int i2, int j2) {
 
 
 
-class Labyrinth {
-    public var w : int;
-    public var h : int;
-    public var cell : ArrayList[,];
-    public var horizontWalls : string[,];
-    public var verticalWalls : string[,];
-
-    function Labyrinth(W : int, H : int) {
-        w = W;
-        h = H;
-        cell = new ArrayList[h, w];
-        horizontWalls = new string[h + 1, w];
-        verticalWalls = new string[h, w + 1];
-        for (var i : int = 0; i < h; i++) {
-            for (var j : int = 0; j < w; j++) {
-                cell[i, j] = new ArrayList();
-            }
-        }
-        for (i = 0; i < h; i++) {
-            for (j = 0; j < w + 1; j++) {
-                verticalWalls[i, j] = "empty";
-            }
-        }
-        for (i = 0; i < h + 1; i++) {
-            for (j = 0; j < w; j++) {
-                horizontWalls[i, j] = "empty";
-            }
+Labyrinth::Labyrinth(int w, int h) {
+    this->w = w;
+    this->h = h;
+    for (i = 0; i < h; i++) {
+        for (j = 0; j < w + 1; j++) {
+            verticalWalls[i, j] = "empty";
         }
     }
-
-    private function checkPos(i : int, j : int) : boolean {
-        return (i >= 0 && i < h && j >= 0 && j < w);
+    for (i = 0; i < h + 1; i++) {
+        for (j = 0; j < w; j++) {
+            horizontWalls[i, j] = "empty";
+        }
     }
+}
 
-    //По кордам и направлению дает новые корды.
-    static function move(I : int, J : int, direct : Direction) : Vector2 {
-        var i : int = I;
-        var j : int = J;
-        var direction : string = direct.getName();
+bool Labyrinth::checkPos(int i, int j) {
+    return (i >= 0 && i < h && j >= 0 && j < w);
+}
+
+//По кордам и направлению дает новые корды.
+pair<int, int> Labyrinth::move(int i, int j, Direction direct) {
+    string direction = direct.getName();
+    if (direction == "up") {
+        i = i + 1;
+    }
+    if (direction == "down") {
+        i = i - 1;
+    }
+    if (direction == "left") {
+        j = j - 1;
+    }
+    if (direction == "right") {
+        j = j + 1;
+    }
+    return make_pair(i, j);
+}
+
+string Labyrinth::getWall(int i, int j, Direction direct) {
+    string direction = direct.getName();
+    if (direction == "up" || direction == "down") {
         if (direction == "up") {
-            i = i + 1;
+            i++;
         }
-        if (direction == "down") {
-            i = i - 1;
-        }
-        if (direction == "left") {
-            j = j - 1;
-        }
+        return horizontWalls[i][j];
+    } else {
         if (direction == "right") {
-            j = j + 1;
+            j++;
         }
-        return Vector2(i, j);
+        return verticalWalls[i][j];
     }
+}
 
-    function getWall(i : int, j : int, direct : Direction) {
-        var direction : string = direct.getName();
-        if (direction == "up" || direction == "down") {
-            if (direction == "up") {
-                i++;
-            }
-            return horizontWalls[i, j];
-        } else {
-            if (direction == "right") {
-                j++;
-            }
-            return verticalWalls[i, j];
+void Labyrinth::addWall(int i, int j, Direction direct, string wall) {
+    string direction = direct.getName();
+    if (direction == "up" || direction == "down") {
+        if (direction == "up") {
+            i++;
         }
-    }
-
-    function addWall(i : int, j : int, direct : Direction, wall : string) {
-        var direction : string = direct.getName();
-        if (direction == "up" || direction == "down") {
-            if (direction == "up") {
-                i++;
-            }
-            horizontWalls[i, j] = wall;
-        } else {
-            if (direction == "right") {
-                j++;
-            }
-            verticalWalls[i, j] = new string.Copy(wall);
+        horizontWalls[i][j] = wall;
+    } else {
+        if (direction == "right") {
+            j++;
         }
+        verticalWalls[i][j] = wall;
     }
+}
 
-    function findPlayer(name : string) : Vector3 {
-        var player : Player;
-        for (var i : int = 0; i < h; i++) {
-            for (var j : int = 0; j < w; j++) {
-                var it = 0;
-                for (var tmp : LabyrinthObject in cell[i, j]) {
-                    if (tmp.type == LabyrinthObject.TYPE_PLAYER) {
-                        player = tmp;
-                        if (player.name == name) {
-                            return Vector3(i, j, it);
-                        }
+tuple<int, int, int> Labyrinth::findPlayer(string name) {
+    Player player;
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < w; j++) {
+            int it = 0;
+            for (LabyrinthObject tmp : cell[i][j]) {
+                if (tmp.type == LabyrinthObject.TYPE_PLAYER) {
+                    player = tmp;
+                    if (player.name == name) {
+                        return make_tuple(i, j, it);
                     }
-                    it++;
                 }
+                it++;
             }
         }
-        return Vector3(w + 1, h + 1, 1);
     }
+    return make_tuple(w + 1, h + 1, 1);
+}
 
-    function movePlayer(name : string, direct : Direction) {
-        var direction : string = direct.getName();
-        var player : Player;
-        var pos : Vector3 = findPlayer(name);
+void Labyrinth::movePlayer(string name, Direction direct) {
+    string direction = direct.getName();
+    Player player;
+    tuple<int, int, int> pos = findPlayer(name);
 
-        player = cell[pos.x, pos.y][pos.z];
-        cell[pos.x, pos.y].RemoveAt(pos.z);
-        var tmp : Vector2 = Labyrinth.move(pos.x, pos.y, direct);
-        var i : int = tmp.x;
-        var j : int = tmp.y;
-        cell[i, j].Add(player);
-        player.i = i;
-        player.j = j;
-        player.k = cell[i, j].Count - 1;
+    player = cell[pos.get(0), pos.get(1)][pos.get(2)];
+    cell[pos.get(0), pos.get(1)].RemoveAt(pos.get(2));
+    pair<int, int> tmp  = Labyrinth.move(pos.get(0), pos.get(1), direct);
+    int i = tmp.first;
+    int j = tmp.second;
+    cell[i, j].push_back(player);
+    player.i = i;
+    player.j = j;
+    player.k = cell[i][j].size() - 1;
+}
+
+void Labyrinth::killPlayer(string name) {
+    Debug.Log("Try to kill : " + name);
+    tuple<int, int, int> playerPos = findPlayer(name);
+    Player player = cell[playerPos.get(0)][playerPos.get(1)][playerPos.get(2)];
+    player.alive = false;
+}
+
+void Labyrinth::addObject(int i, int j, LabyrinthObject item) {
+    item.i = i;
+    item.j = j;
+    item.k = cell[i][j].size();
+    cell[i][j].push_back(item);
+}
+
+voidLabyrinth:: makeBorder() {
+    for (int r = 0; r < h; r++) {
+        verticalWalls[r][0] = "border";
+        verticalWalls[r][w] = "border";
     }
-
-    function killPlayer(name : string) {
-        Debug.Log("Try to kill : " + name);
-        var playerPos : Vector3 = findPlayer(name);
-        var player : Player = cell[playerPos.x, playerPos.y][playerPos.z];
-        player.alive = false;
+    for (int c = 0; c < w; c++) {
+        horizontWalls[0][c] = "border";
+        horizontWalls[h][c] = "border";
     }
-
-    function addObject(i : int, j : int, item : LabyrinthObject) {
-        item.i = i;
-        item.j = j;
-        item.k = cell[i, j].Count;
-        cell[i, j].Add(item);
-    }
-
-    function makeBorder() {
-        for (var r : int = 0; r < h; r++) {
-            verticalWalls[r, 0] = new string.Copy("border");
-            verticalWalls[r, w] = new string.Copy("border");
-        }
-        for (var c : int = 0; c < w; c++) {
-            horizontWalls[0, c] = new string.Copy("border");
-            horizontWalls[h, c] = new string.Copy("border");
-        }
-    }
+}
 
 
-    private var wasWall : boolean[,,];
+void Labyrinth::create() {
+    DSU dsu = DSU(w, h);
 
-    //settings:
-    var data : LabyrinthData;
-
-    function create() {
-        wasWall = new boolean[h, w, 4];
-        var dsu = new DSU(w, h);
-
-        //Строит рандомный остов.
-        while (dsu.k > 1) {
-            var i : int = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, h - 0.5 - float.Epsilon));
-            var j : int = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, w - 0.5 - float.Epsilon));
-            var k : int = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, 4 - 0.5 - float.Epsilon));
-            var newPos : Vector2 = move(i, j, new Direction(k));
-            if (checkPos(newPos.x, newPos.y)) {
-                var lastk : int = dsu.k;
-                dsu.merge(i, j, newPos.x, newPos.y);
-                if (lastk > dsu.k) {
-                    wasWall[i, j, k] = true;
-                    wasWall[newPos.x, newPos.y, (k + 2) % 4] = true;
-                }
+    //Строит рандомный остов.
+    while (dsu.k > 1) {
+        int i = rand() % h;
+        int j = rand() % w;
+        int k = rand() % 4;
+        //var int i = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, h - 0.5 - float.Epsilon));
+//vrode tak //var int j = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, w - 0.5 - float.Epsilon));
+        //var k : int = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, 4 - 0.5 - float.Epsilon));
+        pair<int, int> newPos = move(i, j, Direction(k));
+        if (checkPos(newPos.first, newPos.second)) {
+            int lastk = dsu.k;
+            dsu.merge(i, j, newPos.first, newPos.second);
+            if (lastk > dsu.k) {
+                wasWall[i][j][k] = true;
+                wasWall[newPos.first][newPos.second][(k + 2) % 4] = true;
             }
         }
+    }
 
-        //Ставит  остальные стены
-        for (i = 0; i < h; i++) {
-            for (j = 0; j < w; j++) {
-                for (k = 0; k < 4; k++) {
-                    if (!wasWall[i, j, k]) {
-                        if (Random.value < data.wallProb) addWall(i, j, new Direction(k), "wall");
+    //Ставит  остальные стены
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < w; j++) {
+            for (int k = 0; k < 4; k++) {
+                if (!wasWall[i][j][k]) {
+                    if (Random.value < data.wallProb) {  //что за рандом я не всек
+                        addWall(i, j, Direction(k), "wall");
                     }
                 }
             }
         }
+    }
 
-        var pos : int = 0;
+    int pos = 0;
 
-        //Put treasures
-        for (i = 0; i <= data.treasureCount; i++) {
-            var treasure : Treasure;
-            if (i == 0)
-                treasure = new Treasure(new Key());
-            else
-                if (data.useRandomTreasure) {
-                    treasure = data.treasures[Mathf.FloorToInt(Random.Range(0, data.treasures.Count - float.Epsilon))];
-                } else {
-                    treasure = data.treasures[pos++];
+    //Put treasures
+    for (int i = 0; i <= data.treasureCount; i++) {
+        Treasure treasure;
+        if (i == 0)
+            treasure = Treasure(Key());
+        else
+            if (data.useRandomTreasure) {
+                treasure = data.treasures[rand() % data.treasures.Count];
+            } else {
+                treasure = data.treasures[pos++];
+            }
+        pair<int, int> treasurePos;
+        int seed = 0; // How many times you tried to choose
+        //Choose pos:
+        while (true) {
+            treasurePos.first = rand() % h;
+            treasurePos.second = rand() % w;
+            int wallCount = 0;
+            for (int j = 0; j < 4; j++) {
+                if (getWall(treasurePos.first, treasurePos.second, Direction(j)) != "empty") {
+                    wallCount++;
                 }
-            var treasurePos : Vector2;
-            var seed : int = 0; // How many times you tried to choose
-            //Choose pos:
-            while (true) {
-                treasurePos.x = Mathf.FloorToInt(Random.Range(0, h - float.Epsilon));
-                treasurePos.y = Mathf.FloorToInt(Random.Range(0, w - float.Epsilon));
-                var wallCount : int = 0;
-                for (j = 0; j < 4; j++) {
-                    if (getWall(treasurePos.x, treasurePos.y, new Direction(j)) != "empty")
-                        wallCount++;
-                }
-                var f : boolean = true;
-                //check if other treasures here:
-                if (!data.canPutTreasureTogether) {
-                    for (var obj : LabyrinthObject in cell[treasurePos.x, treasurePos.y]) {
-                        if (obj.type == LabyrinthObject.TYPE_TREASURE) {
-                            f = false;
-                        }
+            }
+            bool f = true;
+            //check if other treasures here:
+            if (!data.canPutTreasureTogether) {
+                for (LabyrinthObject obj : cell[treasurePos.first, treasurePos.second]) {
+                    if (obj.type == LabyrinthObject::TYPE_TREASURE) {
+                        f = false;
                     }
                 }
-                if (!f) {
-                    seed++;
-                    continue;
-                }
-
-                var prob : float = wallCount * data.loveToilets + Mathf.Pow(1.1, seed) - 1 + data.staticTreasureProb;
-                if (Random.value < prob) {
-                    addObject(treasurePos.x, treasurePos.y, treasure);
-                    break;
-                }
+            }
+            if (!f) {
                 seed++;
+                continue;
             }
-        }
 
+            float prob = wallCount * data.loveToilets + Mathf.Pow(1.1, seed) - 1 + data.staticTreasureProb;
+            if (Random.value < prob) {  //опять эта странная штука
+                addObject(treasurePos.first, treasurePos.second, treasure);
+                break;
+            }
+            seed++;
+        }
+    }
+
+    makeBorder();
+}
+
+void GameLog::addObject(Object a) {  //тут вроде LabyrinthObject надо
+    cell[iCur, jCur].push_back(a);
+}
+
+GameLog::GameLog(int w, int h, int ammo, int life, bool border, int i, int j) : Labyrinth(w, h) {
+    player = Player("HERO", ammo, life);
+    //тут было super(w, h)
+    iStart = i;
+    jStart = j;
+    iCur = i;
+    jCur = j;
+    if (border) {
         makeBorder();
     }
 }
 
-class GameLog extends Labyrinth {
-    var previousVersion : GameLog;//Если ловушка переместила тебя.
-    var player : Player;
+void GameLog::addMove(Direction direct) {
+    string direction = direct.getName();
+    turn.push_back(direction);
+    pair<int, int> tmp = Labyrinth::move(iCur, jCur, direct);
+    iCur = tmp.first;
+    jCur = tmp.second;
+}
 
-    var turn : ArrayList;
-    var iStart : int;
-    var jStart : int;
-    var iCur : int;
-    var jCur : int;
-    function addObject(a : Object) {
-        cell[iCur, jCur].Add(a);
-    }
-
-    function GameLog(w : int, h : int, ammo : int, life : int, border : boolean, i : int, j : int) {
-        player = new Player("HERO", ammo, life);
-        super(w, h);
-        turn = new ArrayList();
-        iStart = i;
-        jStart = j;
-        iCur = i;
-        jCur = j;
-        if (border) {
-            makeBorder();
-        }
-    }
-
-    function addMove(direct : Direction) {
-        var direction : string = direct.getName();
-        turn.Add(direction);
-        var tmp : Vector2 = Labyrinth.move(iCur, jCur, direct);
-        iCur = tmp.x;
-        jCur = tmp.y;
-    }
-
-    function addWall(direct : Direction, wall : string) {
-        var direction : string = direct.getName();
-        if (direction == "up" || direction == "down") {
-            var j : int = jCur;
-            var i : int = 0;
-            if (direction == "down") {
-                i = iCur;
-            } else {
-                i = iCur + 1;
-            }
-            horizontWalls[i, j] = wall;
-        } else {
+void GameLog::addWall(Direction direct, string wall) {
+    string direction = direct.getName();
+    if (direction == "up" || direction == "down") {
+        int j = jCur;
+        int i = 0;
+        if (direction == "down") {
             i = iCur;
-            j = 0;
-            if (direction == "left") {
-                j = jCur;
-            } else {
-                j = jCur + 1;
-            }
-            verticalWalls[i, j] = wall;
+        } else {
+            i = iCur + 1;
         }
+        horizontWalls[i][j] = wall;
+    } else {
+        int i = iCur;
+        int j = 0;
+        if (direction == "left") {
+            j = jCur;
+        } else {
+            j = jCur + 1;
+        }
+        verticalWalls[i][j] = wall;
     }
 }

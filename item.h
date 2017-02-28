@@ -23,20 +23,24 @@ public:
 };
 
 class ArmorPiercingBullet : Item {
+public:
     //TODO:
     ArmorPiercingBullet();
 };
 
 class Flower : Item {
+public:
     //TODO:
     Flower();
 };
 
 class Bullet : Item {
+public:
     Bullet();
 };
 
 class Key : Item {
+public:
     Key();
 };
 

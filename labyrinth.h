@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include "item.h"
+#include "treasure.h"
 
 #ifndef LABYRINTH_H
 #define LABYRINTH_H
@@ -118,5 +120,6 @@ class GameLog : Labyrinth {
     void addMove(Direction direct);
     void addWall(Direction direct, string wall);
 };
+
 
 #endif // LABYRINTH_H

@@ -119,7 +119,7 @@ Player::Player(string Name, int Ammo, int playerLife) {
     for (int i = 0; i < Ammo; i++) {
         items.push_back(Bullet());
     }
-    tostring = []() {
+    function<string (void)> tostring = [this]() {
             string tmp = "player: name = " + name + "; life = " +
                 life.Tostring() + "; alive = " + alive.Tostring()+ "; items : ";
             for (auto item : items) {

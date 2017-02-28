@@ -26,10 +26,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     labyrinth.cpp \
-    item.cpp
+    item.cpp \
+    treasure.cpp
 
 HEADERS  += mainwindow.h \
     labyrinth.h \
-    item.h
+    item.h \
+    treasure.h
 
 FORMS    += mainwindow.ui

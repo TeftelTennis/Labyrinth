@@ -364,7 +364,7 @@ void Labyrinth::create() {
             bool f = true;
             //check if other treasures here:
             if (!data.canPutTreasureTogether) {
-                for (LabyrinthObject obj : cell[treasurePos.first, treasurePos.second]) {
+                for (LabyrinthObject obj : cell[treasurePos.first][treasurePos.second]) {
                     if (obj.type == LabyrinthObject::TYPE_TREASURE) {
                         f = false;
                     }

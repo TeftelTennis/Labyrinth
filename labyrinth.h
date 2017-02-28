@@ -20,7 +20,7 @@ private:
 public:
     int w;
     int h;
-    vector<LabyrinthObject> cell[MAXSIZE][MAXSIZE];               //<>TODODODO
+    vector<LabyrinthObject> cell[MAXSIZE][MAXSIZE];
     string horizontWalls[MAXSIZE][MAXSIZE];
     string verticalWalls[MAXSIZE][MAXSIZE];
     LabyrinthData data;

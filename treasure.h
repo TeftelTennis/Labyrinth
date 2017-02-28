@@ -1,9 +1,13 @@
+#include "labyrinthobject.h"
 #ifndef TREASURE_H
 #define TREASURE_H
 
-class Treasure : LabyrinthObject {
-    String name : String;
+class Treasure : public LabyrinthObject {
+public:
+    string name;
     LabyrinthObject content;
+
+    Treasure();
 
     Treasure(LabyrinthObject Content);
 };

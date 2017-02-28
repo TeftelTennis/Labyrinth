@@ -27,11 +27,23 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     labyrinth.cpp \
     item.cpp \
-    treasure.cpp
+    treasure.cpp \
+    player.cpp \
+    dsu.cpp \
+    labyrinthobject.cpp \
+    direction.cpp \
+    gamelog.cpp \
+    labyrinthdata.cpp
 
 HEADERS  += mainwindow.h \
     labyrinth.h \
     item.h \
-    treasure.h
+    treasure.h \
+    player.h \
+    dsu.h \
+    labyrinthobject.h \
+    direction.h \
+    gamelog.h \
+    labyrinthdata.h
 
 FORMS    += mainwindow.ui

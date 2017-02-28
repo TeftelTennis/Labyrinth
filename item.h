@@ -1,9 +1,16 @@
+#include "labyrinthobject.h"
 #ifndef ITEM_H
 #define ITEM_H
 
 using namespace std;
 
-class Item : LabyrinthObject {
+class Labyrinth;
+
+class Player;
+
+class Direction;
+
+class Item : public LabyrinthObject {
 public:
     int ITEM_TYPE_EMPTY = 0;
     int ITEM_TYPE_FLOWER = 1;

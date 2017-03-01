@@ -2,21 +2,18 @@
 #include <functional>
 #include "treasure.h"
 
+
+string Treasure::tostring() {
+    string res = "Treasure. Conntents : ";
+    res += content.tostring() + " ";
+    return res;
+}
+
 Treasure::Treasure() {
     type = TYPE_TREASURE;
-    function<string (void)> toString = []() {
-        string res = "Treasure. Conntents : ";
-        res += content.tostring() + " ";
-        return res;
-    };
 }
 
 Treasure::Treasure(LabyrinthObject Content) {
     content = Content;
     type = TYPE_TREASURE;
-    function<string (void)> toString = []() {
-        string res = "Treasure. Conntents : ";
-        res += content.tostring() + " ";
-        return res;
-    };
 }

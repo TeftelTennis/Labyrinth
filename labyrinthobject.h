@@ -20,7 +20,7 @@ public:
     string name;
     int type;
 
-    function<string (void)> tostring();
+    virtual string tostring();
     LabyrinthObject ();
     void remove();
 };

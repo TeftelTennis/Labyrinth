@@ -1,4 +1,6 @@
 #include "labyrinthobject.h"
+#include "item.h"
+#include <vector>
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -16,6 +18,7 @@ public:
     Player(string Name, int Ammo, int playerLife);
     void take(Player corpse);
     int ammo();
+    string tostring();
 };
 
 #endif // PLAYER_H

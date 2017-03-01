@@ -1,39 +1,46 @@
 #include "item.h"
+#include "player.h"
+#include "labyrinth.h"
+#include "direction.h"
+#include <vector>
 
 using namespace std;
+string Item::tostring() {
+    return "item: " + name;
+}
+
+
+//infoWindow = [](int windowID) {
+//    GUILayout.Label("--EMPTY--");
+//};
+void Item::hitPlayer(Player player, Labyrinth field) {}
+void Item::useaa(Player player, Labyrinth field) {}
+bool Item::hitWall(Direction direction) {return false;}
 
 Item::Item() {
     //image = new Texture();
     name = "empty";
     itemType = ITEM_TYPE_EMPTY;
     type = TYPE_ITEM;
-    tostring = []() {
-            return "item: " + name;
-        };
-    infoWindow = [](int windowID) {
-    //    GUILayout.Label("--EMPTY--");
-    };
-    hitPlayer = [](Player player, Labyrinth field) {};
-    use = [](Plyer player, Labyrinth field) {};
-    hitWall = [](Direction direction) {return false;};
 }
 
-ArmorPiercingBullet::ArmorPiercingBullet() {
-    super();
-}
+//ArmorPiercingBullet::ArmorPiercingBullet() {
+//    super();
+//}
 
-Flower::Flower() {
-    super();
+//Flower::Flower() {
+//    super();
+//}
+
+void Bullet::hitPlayer(Player player, Labyrinth field) {
+    player.life--;
+    player.alive = player.life > 0;
 }
 
 Bullet::Bullet() {
     //image = AssetDatabase.LoadAssetAtPath("Assets/Textures/18040.jpg", typeof(Texture)) as Texture;
     itemType = ITEM_TYPE_BULLET;
     name = "bullet";
-    hitPlayer = [](Player player, Labyrinth field) {
-        player.life--;
-        player.alive = player.life > 0;
-    };
 }
 
 Key::Key() {

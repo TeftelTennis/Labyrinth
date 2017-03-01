@@ -80,10 +80,10 @@ tuple<int, int, int> Labyrinth::findPlayer(string name) {
             int it = 0;
             for (LabyrinthObject tmp : cell[i][j]) {
                 if (tmp.type == LabyrinthObject::TYPE_PLAYER) {
-                    Player player = tmp;
-                    if (player.name == name) {
-                        return make_tuple(i, j, it);
-                    }
+                    //Player player = tmp;
+                    //if (player.name == name) {
+                    //    return make_tuple(i, j, it);
+                    //}
                 }
                 it++;
             }
@@ -97,7 +97,7 @@ void Labyrinth::movePlayer(string name, Direction direct) {
     Player player;
     tuple<int, int, int> pos = findPlayer(name);
 
-    player = cell[get<0>(pos)][get<1>(pos)][get<2>(pos)];
+    /*player = cell[get<0>(pos)][get<1>(pos)][get<2>(pos)];
     int position = get<2>(pos);
     cell[get<0>(pos)][get<1>(pos)].erase(cell[get<0>(pos)][get<1>(pos)].begin() + position);
     pair<int, int> tmp  = Labyrinth::move(get<0>(pos), get<1>(pos), direct);
@@ -107,13 +107,14 @@ void Labyrinth::movePlayer(string name, Direction direct) {
     player.i = i;
     player.j = j;
     player.k = cell[i][j].size() - 1;
+    */
 }
 
 void Labyrinth::killPlayer(string name) {
     //Debug.Log("Try to kill : " + name);
     tuple<int, int, int> playerPos = findPlayer(name);
-    Player player = cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)];
-    player.alive = false;
+    //Player player = cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)];
+    //player.alive = false;
 }
 
 void Labyrinth::addObject(int i, int j, LabyrinthObject item) {
@@ -199,11 +200,11 @@ void Labyrinth::create() {
             bool f = true;
             //check if other treasures here:
             if (!data.canPutTreasureTogether) {
-                for (LabyrinthObject obj : cell[treasurePos.first][treasurePos.second]) {
-                    if (obj.type == LabyrinthObject::TYPE_TREASURE) {
-                        f = false;
-                    }
-                }
+                //for (LabyrinthObject obj : cell[treasurePos.first][treasurePos.second]) {
+                //    if (obj.type == LabyrinthObject::TYPE_TREASURE) {
+                //        f = false;
+                //    }
+                //}
             }
             if (!f) {
                 seed++;

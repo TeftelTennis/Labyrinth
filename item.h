@@ -19,10 +19,11 @@ public:
     int ITEM_TYPE_KEY = 4;
 
     int itemType;
-    void infoWindow (int windowID);
-    void hitPlayer (Player player, Labyrinth field);
-    bool hitWall(Direction direction);
-    void use(Player player, Labyrinth field);
+    string tostring();
+    //virtual void infoWindow (int windowID);
+    virtual void hitPlayer (Player player, Labyrinth field);
+    virtual bool hitWall(Direction direction);
+    virtual void useaa(Player player, Labyrinth field);
 
     //Texture image;
 
@@ -43,6 +44,7 @@ public:
 
 class Bullet : public Item {
 public:
+    void hitPlayer(Player player, Labyrinth field);
     Bullet();
 };
 

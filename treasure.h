@@ -5,6 +5,9 @@
 class Treasure : public LabyrinthObject {
 public:
     string name;
+
+    string tostring();
+
     LabyrinthObject content;
 
     Treasure();

@@ -1,5 +1,15 @@
 #include "player.h"
 
+
+string Player::tostring() {
+    string tmp = "player: name = " + name + "; life = " +
+        to_string(life) + "; alive = " + to_string(alive) + "; items : ";
+    for (auto item : items) {
+        tmp += "(" + item.tostring() + " )";
+    }
+    return tmp + ";";
+ }
+
 int Player::itemCount(int itemType) {
     int ans = 0;
     for (int i = 0; i < items.size(); i++) {
@@ -20,7 +30,7 @@ void Player::deleteItem(int itemType) {
     for (int i = 0; i < items.size(); i++) {
         Item tmp = items[i];
         if (tmp.itemType == itemType) {
-            items.RemoveAt(i);
+            items.erase(items.begin() + i);
             return;
         }
     }
@@ -34,14 +44,6 @@ Player::Player() {
     type = TYPE_PLAYER;
     alive = true;
     items.clear();
-    function<string (void)> tostring = [this]() {
-            string tmp = "player: name = " + name + "; life = " +
-                life.Tostring() + "; alive = " + alive.Tostring()+ "; items : ";
-            for (auto item : items) {
-                tmp += '(' + item.tostring() + ' )';
-            }
-            return tmp + ";";
-         };
 }
 
 Player::Player(string Name, int Ammo, int playerLife) {
@@ -53,14 +55,6 @@ Player::Player(string Name, int Ammo, int playerLife) {
     for (int i = 0; i < Ammo; i++) {
         items.push_back(Bullet());
     }
-    function<string (void)> tostring = [this]() {
-            string tmp = "player: name = " + name + "; life = " +
-                life.Tostring() + "; alive = " + alive.Tostring()+ "; items : ";
-            for (auto item : items) {
-                tmp += '(' + item.tostring() + ' )';
-            }
-            return tmp + ";";
-         };
 }
 
 void Player::take(Player corpse) {

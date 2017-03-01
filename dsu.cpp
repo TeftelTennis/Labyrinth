@@ -1,5 +1,7 @@
 #include "dsu.h"
 
+using namespace std;
+
 DSU::DSU(int w, int h) {
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {

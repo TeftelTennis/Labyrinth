@@ -1,5 +1,10 @@
+#include "treasure.h"
+#include <vector>
+
 #ifndef LABYRINTHDATA_H
 #define LABYRINTHDATA_H
+
+using namespace std;
 
 class LabyrinthData {
 public:

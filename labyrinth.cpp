@@ -78,12 +78,12 @@ tuple<int, int, int> Labyrinth::findPlayer(string name) {
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
             int it = 0;
-            for (LabyrinthObject tmp : cell[i][j]) {
-                if (tmp.type == LabyrinthObject::TYPE_PLAYER) {
-                    //Player player = tmp;
-                    //if (player.name == name) {
-                    //    return make_tuple(i, j, it);
-                    //}
+            for (auto tmp : cell[i][j]) {
+                if (tmp->type == LabyrinthObject::TYPE_PLAYER) {
+                    auto player = static_cast<Player*>(tmp);
+                    if (player->name == name) {
+                        return make_tuple(i, j, it);
+                    }
                 }
                 it++;
             }
@@ -94,34 +94,33 @@ tuple<int, int, int> Labyrinth::findPlayer(string name) {
 
 void Labyrinth::movePlayer(string name, Direction direct) {
     string direction = direct.getName();
-    Player player;
     tuple<int, int, int> pos = findPlayer(name);
 
-    /*player = cell[get<0>(pos)][get<1>(pos)][get<2>(pos)];
+    auto player = static_cast<Player*>(cell[get<0>(pos)][get<1>(pos)][get<2>(pos)]);
     int position = get<2>(pos);
     cell[get<0>(pos)][get<1>(pos)].erase(cell[get<0>(pos)][get<1>(pos)].begin() + position);
     pair<int, int> tmp  = Labyrinth::move(get<0>(pos), get<1>(pos), direct);
     int i = tmp.first;
     int j = tmp.second;
+    player->i = i;
+    player->j = j;
+    player->k = cell[i][j].size();
     cell[i][j].push_back(player);
-    player.i = i;
-    player.j = j;
-    player.k = cell[i][j].size() - 1;
-    */
+
 }
 
 void Labyrinth::killPlayer(string name) {
     //Debug.Log("Try to kill : " + name);
     tuple<int, int, int> playerPos = findPlayer(name);
-    //Player player = cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)];
-    //player.alive = false;
+    auto player = static_cast<Player*>(cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
+    player->alive = false;
 }
 
 void Labyrinth::addObject(int i, int j, LabyrinthObject item) {
     item.i = i;
     item.j = j;
     item.k = cell[i][j].size();
-    cell[i][j].push_back(item);
+    cell[i][j].push_back(&item);
 }
 
 void Labyrinth:: makeBorder() {
@@ -200,11 +199,11 @@ void Labyrinth::create() {
             bool f = true;
             //check if other treasures here:
             if (!data.canPutTreasureTogether) {
-                //for (LabyrinthObject obj : cell[treasurePos.first][treasurePos.second]) {
-                //    if (obj.type == LabyrinthObject::TYPE_TREASURE) {
-                //        f = false;
-                //    }
-                //}
+                for (auto obj : cell[treasurePos.first][treasurePos.second]) {
+                    if (obj->type == LabyrinthObject::TYPE_TREASURE) {
+                        f = false;
+                    }
+                }
             }
             if (!f) {
                 seed++;

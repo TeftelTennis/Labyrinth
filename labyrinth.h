@@ -8,6 +8,7 @@
 #include "labyrinthobject.h"
 #include "dsu.h"
 #include "labyrinthdata.h"
+#include <memory>
 
 #ifndef LABYRINTH_H
 #define LABYRINTH_H
@@ -20,7 +21,7 @@ private:
 public:
     int w;
     int h;
-    vector<LabyrinthObject> cell[MAXSIZE][MAXSIZE];
+    vector<LabyrinthObject*> cell[MAXSIZE][MAXSIZE];
     string horizontWalls[MAXSIZE][MAXSIZE];
     string verticalWalls[MAXSIZE][MAXSIZE];
     LabyrinthData data;

@@ -1,6 +1,9 @@
+#include <string>
+
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
+using namespace std;
 
 class Direction {
 public:

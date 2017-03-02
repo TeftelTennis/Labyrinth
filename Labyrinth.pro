@@ -33,7 +33,10 @@ SOURCES += main.cpp\
     labyrinthobject.cpp \
     direction.cpp \
     gamelog.cpp \
-    labyrinthdata.cpp
+    labyrinthdata.cpp \
+    server.cpp \
+    labyrinthobjectfactory.cpp \
+    trap.cpp
 
 HEADERS  += mainwindow.h \
     labyrinth.h \
@@ -44,6 +47,9 @@ HEADERS  += mainwindow.h \
     labyrinthobject.h \
     direction.h \
     gamelog.h \
-    labyrinthdata.h
+    labyrinthdata.h \
+    server.h \
+    labyrinthobjectfactory.h \
+    trap.h
 
 FORMS    += mainwindow.ui

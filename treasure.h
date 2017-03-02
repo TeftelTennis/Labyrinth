@@ -8,7 +8,7 @@ public:
 
     string tostring();
 
-    LabyrinthObject content;
+    LabyrinthObject* content;
 
     Treasure();
 

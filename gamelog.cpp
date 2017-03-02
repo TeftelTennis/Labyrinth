@@ -2,7 +2,7 @@
 
 
 void GameLog::addObject(LabyrinthObject a) {  //тут вроде LabyrinthObject надо
-    cell[iCur][jCur].push_back(a);
+    cell[iCur][jCur].push_back(&a);
 }
 
 GameLog::GameLog(int w, int h, int ammo, int life, bool border, int i, int j) : Labyrinth(w, h) {

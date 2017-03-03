@@ -4,7 +4,8 @@
 #define GAMELOG_H
 
 
-class GameLog : public Labyrinth {
+class GameLog : public Labyrinth {\
+public:
     //GameLog previousVersion;//Если ловушка переместила тебя.
     Player player;
 

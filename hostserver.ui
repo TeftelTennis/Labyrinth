@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HostServer</class>
+ <widget class="QDialog" name="HostServer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QPushButton" name="menuButton">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>250</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Main Menu</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>250</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Host Server</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>135</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Set your start position:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="xCoors">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="yCoors">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>10</y>
+     <width>211</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>General Settings:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Width:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="widthSpinbox">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>30</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Height:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="heightSpinbox">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>30</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Start ammo: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="ammoSpinbox">
+            <property name="maximum">
+             <number>25</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Start lifes:    </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="lifeSpinbox">
+            <property name="maximum">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>120</y>
+     <width>361</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_9">
+    <item>
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>Treasure settings:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QCheckBox" name="treasureTogether">
+                <property name="text">
+                 <string>Can put treasures together</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="randomTreasure">
+                <property name="text">
+                 <string>Random Treasure</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Keys:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="keysSpinbox"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Bullets:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="bulletsSpinbox"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Mines:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="minesSpinbox"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>90</y>
+     <width>361</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_6">
+    <item>
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Prob of walls:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="wallProb">
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>190</y>
+     <width>361</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_13">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_10">
+      <item>
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>Tresure prob:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Treasure in toilet prob:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_11">
+      <item>
+       <widget class="QSlider" name="tresureProb">
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="toiletProb">
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_12">
+      <item>
+       <widget class="QProgressBar" name="progressBar_2">
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="progressBar_3">
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <zorder>menuButton</zorder>
+  <zorder>pushButton</zorder>
+  <zorder>xCoors</zorder>
+  <zorder>yCoors</zorder>
+  <zorder>label</zorder>
+  <zorder>label_2</zorder>
+  <zorder>label_3</zorder>
+  <zorder>label_4</zorder>
+  <zorder>label_5</zorder>
+  <zorder>label_6</zorder>
+  <zorder>widthSpinbox</zorder>
+  <zorder>heightSpinbox</zorder>
+  <zorder>ammoSpinbox</zorder>
+  <zorder>lifeSpinbox</zorder>
+  <zorder>label_7</zorder>
+  <zorder>wallProb</zorder>
+  <zorder>progressBar</zorder>
+  <zorder>label_8</zorder>
+  <zorder>treasureTogether</zorder>
+  <zorder>randomTreasure</zorder>
+  <zorder>label_9</zorder>
+  <zorder>label_10</zorder>
+  <zorder>keysSpinbox</zorder>
+  <zorder>bulletsSpinbox</zorder>
+  <zorder>label_8</zorder>
+  <zorder>label_8</zorder>
+  <zorder>label_11</zorder>
+  <zorder>minesSpinbox</zorder>
+  <zorder></zorder>
+  <zorder></zorder>
+  <zorder>label_11</zorder>
+  <zorder>label_12</zorder>
+  <zorder>label_13</zorder>
+  <zorder>tresureProb</zorder>
+  <zorder>toiletProb</zorder>
+  <zorder>progressBar_2</zorder>
+  <zorder>progressBar_3</zorder>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>wallProb</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>180</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>254</x>
+     <y>104</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tresureProb</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>203</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toiletProb</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar_3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

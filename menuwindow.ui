@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MenuWindow</class>
+ <widget class="QDialog" name="MenuWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Menu</string>
+  </property>
+  <widget class="QPushButton" name="joinButton">
+   <property name="geometry">
+    <rect>
+     <x>14</x>
+     <y>212</y>
+     <width>181</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Join Server</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="hostButton">
+   <property name="geometry">
+    <rect>
+     <x>194</x>
+     <y>212</y>
+     <width>191</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Host Server</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>401</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/pics/menuPic.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <zorder>label</zorder>
+  <zorder>joinButton</zorder>
+  <zorder>hostButton</zorder>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

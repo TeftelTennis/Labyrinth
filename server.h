@@ -19,7 +19,6 @@ class Server {
     deque<string> turnQueue;
     string turnPlayer;
     deque<string> tmpQueue;
-    //NetworkAdmin netAdmin;
     //ServerData serverData;
     LabyrinthObjectFactory objectFactory;
 
@@ -29,13 +28,12 @@ class Server {
     string command = "";
     vector<string> commandLog;
     pair<int, int> scrollPosition = make_pair(0, 0);
-    //var consoleStyle : GUIStyle;
-    bool consoleButtonPressed = false;
+   bool consoleButtonPressed = false;
 
 
     void Start();
 
-    void initField(/*ServerData serverData*/);
+    void initField(serverData);
 
     //Вход выход игроков
     void killPlayer(string name);

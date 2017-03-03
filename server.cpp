@@ -1,5 +1,5 @@
 #include "server.h"
-
+#include "splitter.h"
 
 void Server::Start() {
     commandLog.clear();
@@ -263,21 +263,7 @@ void Server::doTurn(string turn, string nameP) {
     commandLog.push_back(nameP + ":>" + turn);
     //string arr[3] = turn.Split([" "], 3, System.StringSplitOptions.None);
     //SPLIT
-    string arr[3];
-    int iter = 0;
-    int count = 0;
-
-    while (turn.size() > 0) {
-        if ((iter >= turn.size()) || (turn[iter] == ' ')) {
-            arr[count] = turn.substr(0, iter);
-            turn = turn.substr(iter, turn.size());
-            iter = 0;
-            count++;
-        }
-        else {
-            iter++;
-        }
-    }
+    vector<string> arr = splitter::split(' ', 3, turn);
 
     string type = arr[0];
 
@@ -298,20 +284,8 @@ void Server::startGame() {
 
 
 void Server::doCommand(string command) {
-    string com[100];
-    int iter = 0;
-    int count = 0;
-    while (command.size() > 0) {
-        if ((iter >= command.size()) || (command[iter] == ' ')) {
-            com[count] = command.substr(0, iter);
-            command = command.substr(iter, command.size());
-            iter = 0;
-            count++;
-        }
-        else {
-            iter++;
-        }
-    }
+    vector<string> com = splitter::split(' ', 100, command);
+
     tuple<int, int, int> pos;
     Player* player ;
     pair<int, int> tmpos;
@@ -356,7 +330,7 @@ void Server::doCommand(string command) {
         tmpos = make_pair(stoi(com[1]), stoi(com[2]));
         field.addWall(tmpos.first, tmpos.second, Direction(com[3]), com[4]);
     } else if (com[0] == "do") {
-        for (int i  = 2; i < count; i++) {
+        for (int i  = 2; i < com.size(); i++) {
             com[1] += " " + com[i];
         }
         doTurn(com[1], turnPlayer);

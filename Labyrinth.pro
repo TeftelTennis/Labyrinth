@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     labyrinth.cpp \
     item.cpp \
     treasure.cpp \
@@ -34,14 +33,18 @@ SOURCES += main.cpp\
     direction.cpp \
     gamelog.cpp \
     labyrinthdata.cpp \
-    server.cpp \
-    labyrinthobjectfactory.cpp \
-    trap.cpp \
+    joinserver.cpp \
+    menuwindow.cpp \
+    hostserver.cpp \
+    gamewindow.cpp \
     serverdata.cpp \
-    network.cpp
+    server.cpp \
+    network.cpp \
+    splitter.cpp \
+    labyrinthobjectfactory.cpp\
+    trap.cpp
 
-HEADERS  += mainwindow.h \
-    labyrinth.h \
+HEADERS  += labyrinth.h \
     item.h \
     treasure.h \
     player.h \
@@ -50,10 +53,20 @@ HEADERS  += mainwindow.h \
     direction.h \
     gamelog.h \
     labyrinthdata.h \
-    server.h \
-    labyrinthobjectfactory.h \
-    trap.h \
+    joinserver.h \
+    menuwindow.h \
+    hostserver.h \
+    gamewindow.h \
     serverdata.h \
-    network.h
+    server.h \
+    network.h \
+    splitter.h \
+    labyrinthobjectfactory.h \
+    trap.h
 
-FORMS    += mainwindow.ui
+FORMS    +=    joinserver.ui \
+    menuwindow.ui \
+    hostserver.ui \
+    gamewindow.ui
+
+RESOURCES +=   resources.qrc

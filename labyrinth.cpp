@@ -106,7 +106,6 @@ void Labyrinth::movePlayer(string name, Direction direct) {
     player->j = j;
     player->k = cell[i][j].size();
     cell[i][j].push_back(player);
-
 }
 
 void Labyrinth::killPlayer(string name) {

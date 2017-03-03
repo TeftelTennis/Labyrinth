@@ -36,7 +36,9 @@ SOURCES += main.cpp\
     labyrinthdata.cpp \
     server.cpp \
     labyrinthobjectfactory.cpp \
-    trap.cpp
+    trap.cpp \
+    serverdata.cpp \
+    network.cpp
 
 HEADERS  += mainwindow.h \
     labyrinth.h \
@@ -50,6 +52,8 @@ HEADERS  += mainwindow.h \
     labyrinthdata.h \
     server.h \
     labyrinthobjectfactory.h \
-    trap.h
+    trap.h \
+    serverdata.h \
+    network.h
 
 FORMS    += mainwindow.ui

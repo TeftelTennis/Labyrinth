@@ -33,7 +33,7 @@ class Server {
 
     void Start();
 
-    void initField(serverData);
+    void initField(/*serverData*/);
 
     //Вход выход игроков
     void killPlayer(string name);

@@ -8,6 +8,8 @@ using namespace std;
 
 class LabyrinthData {
 public:
+    LabyrinthData();
+
     double wallProb;
     vector<Treasure> treasures;
     bool useRandomTreasure;

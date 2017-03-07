@@ -21,9 +21,9 @@ public:
     int itemType;
     string tostring();
     //virtual void infoWindow (int windowID);
-    virtual void hitPlayer (Player player, Labyrinth field);
+    virtual void hitPlayer (Player& player, Labyrinth* field);
     virtual bool hitWall(Direction direction);
-    virtual void useaa(Player player, Labyrinth field);
+    virtual void useaa(Player& player, Labyrinth* field);
 
     //Texture image;
 
@@ -44,7 +44,7 @@ public:
 
 class Bullet : public Item {
 public:
-    void hitPlayer(Player player, Labyrinth field);
+    void hitPlayer(Player& player, Labyrinth* field);
     Bullet();
 };
 

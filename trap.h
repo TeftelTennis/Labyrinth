@@ -12,7 +12,7 @@ public:
     static const int TRAP_TYPE_LAND_MINE = 1;
 
     int trapType;
-    virtual void cought(Player player, Labyrinth field);
+    virtual void cought(Player& player, Labyrinth* field);
 
     string tostring();
 
@@ -23,7 +23,7 @@ public:
 
 class Landmine : public Trap {
 public:
-    void cought(Player player, Labyrinth field);
+    void cought(Player& player, Labyrinth* field);
 
     Landmine();
 };

@@ -16,7 +16,7 @@ public:
     void deleteItem(Item a);
     Player();
     Player(string Name, int Ammo, int playerLife);
-    void take(Player corpse);
+    void take(Player& corpse);
     int ammo();
     string tostring();
 };

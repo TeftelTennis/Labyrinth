@@ -1,48 +1,47 @@
 #include "server.h"
 #include "splitter.h"
+#include <iostream>
+using namespace std;
 
-void Server::Start() {
-    commandLog.clear();
-    //DontDestroyOnLoad(gameObject);
-    //netAdmin = GameObject.Find("Administration").GetComponent(NetworkAdmin);
-    //objectFactory = GameObject.Find("ObjectFactory").GetComponent(LabyrinthObjectFactory);
+Server::Server() {
 }
 
-void Server::initField(/*ServerData serverData*/) {
-    //serverData = GameObject.Find("Server Data").GetComponent(ServerData);
-    /*int w = serverData.weight;
+Server::Server(ServerData serverData) {
+
+    int w = serverData.width;
     int h = serverData.height;
     startAmmo = serverData.startAmmo;
     startLife = serverData.startLife;
     maxPlayer = serverData.maxPlayers;
+    commandLog.clear();
 
-    field = Labyrinth(w, h);
+    field = new Labyrinth(w, h);
 
-    field.data = serverData.data;
-    */
+    field->data = serverData.data;
 
-    field.create();
+
+    field->create();
 
     turnQueue.clear();
     players.clear();
 }
 
 //Вход выход игроков
-void Server::killPlayer(string name) { /*
+void Server::killPlayer(string name) {
     if (turnPlayer == name) {
         turnPlayer = turnQueue.front();
-        turnQueue.pop_front()
-        netAdmin.sendWhoNext(turnPlayer);
+        turnQueue.pop_front();
+        //netAdmin.sendWhoNext(turnPlayer);
         return;
     }
-    field.killPlayer(name);
+    field->killPlayer(name);
     tmpQueue.clear();
     while (!turnQueue.empty()) {
-        string nameP = turnQueue.first();
+        string nameP = turnQueue.front();
         turnQueue.pop_front();
         if (nameP != name) tmpQueue.push_back(nameP);
     }
-    turnQueue = tmpQueue;*/
+    turnQueue = tmpQueue;
 }
 
 void Server::OnPlayerDisconnected () {
@@ -56,7 +55,7 @@ void Server::OnPlayerDisconnected () {
 void Server::addPlayer(int i, int j, string nameP) {
     Player tmp = Player(nameP, startAmmo, startLife);
     //Debug.Log("addPlayer " + nameP + ' ' + tmp.toString());
-    field.cell[i][j].push_back(new Player(nameP, startAmmo, startLife));
+    field->cell[i][j].push_back(new Player(nameP, startAmmo, startLife));
     turnQueue.push_back(nameP);
     //var ip : String = player.externalIP;
     //Debug.Log(ip + ' ' + nameP);
@@ -70,15 +69,15 @@ void Server::move(string nameP, string direct) {
     string result;
     string nameNext;
     bool hasKey = false;
-    tuple<int, int, int> playerPos = field.findPlayer(nameP);
-    Player* player = static_cast<Player*> (field.cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
+    tuple<int, int, int> playerPos = field->findPlayer(nameP);
+    Player* player = static_cast<Player*> (field->cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
     for (int it = 0; it < player->items.size(); it++) {
         Item itt = player->items[it];
         if (itt.itemType == Item::ITEM_TYPE_KEY) {
             hasKey = true;
         }
     }
-    string wall = field.getWall(get<0>(playerPos), get<1>(playerPos), direction);
+    string wall = field->getWall(get<0>(playerPos), get<1>(playerPos), direction);
 
     if (wall == "door") {
         if (hasKey) {
@@ -97,16 +96,19 @@ void Server::move(string nameP, string direct) {
             nameNext = nameP;
         }
         turnQueue.push_back(nameP);
-        field.movePlayer(nameP, direction);
-        playerPos = field.findPlayer(nameP);
-        player = static_cast<Player*>(field.cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
+        playerPos = field->findPlayer(nameP);
+        cerr << get<0>(playerPos) << " " << get<1>(playerPos) << " " << get<2>(playerPos) << "\n";
+        field->movePlayer(nameP, direction);
+        playerPos = field->findPlayer(nameP);
+        cerr << get<0>(playerPos) << " " << get<1>(playerPos) << " " << get<2>(playerPos) << "\n";
+        player = static_cast<Player*>(field->cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
         vector<Trap*> traps;
         Trap* trap;
         vector<Player*> corpses;
         Player* corpse;
         bool treasure;
 
-        for (auto obj : field.cell[get<0>(playerPos)][get<1>(playerPos)]) {
+        for (auto obj : field->cell[get<0>(playerPos)][get<1>(playerPos)]) {
             if (obj->type == LabyrinthObject::TYPE_TREASURE) {
                 treasure = true;
             } else if (obj->type == LabyrinthObject::TYPE_PLAYER) {
@@ -129,6 +131,7 @@ void Server::move(string nameP, string direct) {
             result += " " + trap->trapType;
             trap->cought(*player, field);
         }
+
         if (treasure) {
             result += " 1";
         } else {
@@ -138,17 +141,17 @@ void Server::move(string nameP, string direct) {
         result = "wall";
         nameNext = nameP;
     }
-
+    cerr << result << "\n\n";
     turnPlayer = nameNext;
-    //netAdmin.sendResultOfTurn(nameP, "move " + direct, result, nameNext);
+    //sendResultOfTurn(nameP, "move " + direct, result, nameNext);
 }
 
 void Server::shoot(string nameP, string direct, int item) {
     Direction direction = Direction(direct);
     string result = "";
     string nameNext;
-    tuple<int, int, int> playerPos = field.findPlayer(nameP);
-    Player* player = static_cast<Player*>(field.cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
+    tuple<int, int, int> playerPos = field->findPlayer(nameP);
+    Player* player = static_cast<Player*>(field->cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
     Player* tmpPlayer;
     vector<Player*> corpses;
     vector<Player*> victims;
@@ -158,28 +161,32 @@ void Server::shoot(string nameP, string direct, int item) {
     pair<int, int> pos = make_pair(get<0>(playerPos), get<1>(playerPos));
 
     for (;;) {
-        for (auto obj : field.cell[pos.first][pos.second]) {
+        for (auto obj : field->cell[pos.first][pos.second]) {
             if (obj->type == LabyrinthObject::TYPE_PLAYER) {
                 tmpPlayer = static_cast<Player*>(obj);
-                if (tmpPlayer->name != nameP) {
+                if ((tmpPlayer->name != nameP) && (tmpPlayer->alive)) {
                     victims.push_back(tmpPlayer);
                 }
             }
         }
-        if (victims.size()) {
+       if (victims.size()) {
             break;
         }
-        if (field.getWall(pos.first, pos.second, direction) != "empty") {
+
+        if (field->getWall(pos.first, pos.second, direction) != "empty") {
             if (!bullet->hitWall(direction)) {
                 break;
             }
         }
         //Debug.Log(direction.getName());
-        pos = field.move(pos.first, pos.second, direction);
+        pos = field->move(pos.first, pos.second, direction);
     }
 
     result += victims.size();
-    for (auto tmpPlayer : victims) {
+    cerr << " victims = " << victims.size();
+
+    for (auto iter = victims.begin(); iter != victims.end(); iter++) {
+        Player* tmpPlayer = *iter;
         result += " " + tmpPlayer->name;
         bullet->hitPlayer(*tmpPlayer, field);
         if (tmpPlayer->alive == false) {
@@ -207,18 +214,19 @@ void Server::shoot(string nameP, string direct, int item) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
+    std::cerr << result << " - shoot\n";
     //netAdmin.sendResultOfTurn(nameP, "shoot " + direct + ' ' + item.ToString(), result, nameNext);
 }
 
 void Server::dig(string nameP) {
     string result = "";
     string nameNext;
-    tuple<int, int, int> playerPos = field.findPlayer(nameP);
-    Player* player = static_cast<Player*>(field.cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
+    tuple<int, int, int> playerPos = field->findPlayer(nameP);
+    Player* player = static_cast<Player*>(field->cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
     vector<Treasure*> treasures;
     bool findEmpty = false;
 
-    for (auto it : field.cell[get<0>(playerPos)][get<1>(playerPos)]) {
+    for (auto it : field->cell[get<0>(playerPos)][get<1>(playerPos)]) {
         if (it->type == LabyrinthObject::TYPE_TREASURE) {
             treasures.push_back(static_cast<Treasure*>(it));
         }
@@ -252,7 +260,8 @@ void Server::dig(string nameP) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    //netAdmin.sendResultOfTurn(nameP, "dig", result, nameNext);
+    cerr<< "dig";
+    //sendResultOfTurn(nameP, "dig", result, nameNext);
 }
 
 void Server::doTurn(string turn, string nameP) {
@@ -292,13 +301,13 @@ void Server::doCommand(string command) {
     if (com[0] == "kill") {
         killPlayer(com[1]);
     } else if (com[0] == "give") {
-        pos = field.findPlayer(com[1]);
-        player = static_cast<Player*>(field.cell[get<0>(pos)][get<1>(pos)][get<2>(pos)]);
+        pos = field->findPlayer(com[1]);
+        player = static_cast<Player*>(field->cell[get<0>(pos)][get<1>(pos)][get<2>(pos)]);
         player->items.push_back(*static_cast<Item*>(objectFactory.createItem(stoi(com[2]))));
         //netAdmin.sendResultOfTurn(com[1], "dig", "1 item " + com[2], "Server");
     } else if (com[0] == "stat") {
-        pos = field.findPlayer(com[1]);
-        player = static_cast<Player*>(field.cell[get<0>(pos)][get<1>(pos)][get<2>(pos)]);
+        pos = field->findPlayer(com[1]);
+        player = static_cast<Player*>(field->cell[get<0>(pos)][get<1>(pos)][get<2>(pos)]);
         commandLog.push_back(player->tostring());
         commandLog.push_back("           position = " + to_string(get<0>(pos)) + " " + to_string(get<1>(pos)));
     } else if (com[0] == "set_turn") {
@@ -310,25 +319,25 @@ void Server::doCommand(string command) {
         if (com[3] == "trap") {
             int ololo = stoi(com[4]);
             Trap* tt = static_cast<Trap*>(objectFactory.createTrap(ololo));
-            field.addObject(tmpos.first, tmpos.second, *tt);
+            field->addObject(tmpos.first, tmpos.second, *tt);
         } else if (com[3] == "treasure"){
             if (com[4] == "trap") {
-                field.addObject(tmpos.first, tmpos.second, Treasure(*static_cast<Trap*>(objectFactory.createTrap(stoi(com[5])))));
+                field->addObject(tmpos.first, tmpos.second, Treasure(*static_cast<Trap*>(objectFactory.createTrap(stoi(com[5])))));
             } else if (com[4] == "item") {
-                field.addObject(tmpos.first, tmpos.second, Treasure(*static_cast<Item*>(objectFactory.createItem(stoi(com[5])))));
+                field->addObject(tmpos.first, tmpos.second, Treasure(*static_cast<Item*>(objectFactory.createItem(stoi(com[5])))));
             }
         }
     } else if (com[0] == "get") {
         tmpos = make_pair(stoi(com[1]), stoi(com[2]));
-        for (auto obj : field.cell[tmpos.first][tmpos.second]) {
+        for (auto obj : field->cell[tmpos.first][tmpos.second]) {
             commandLog.push_back(obj->tostring());
         }
     } else if (com[0] == "get_wall") {
         tmpos = make_pair(stoi(com[1]), stoi(com[2]));
-        commandLog.push_back(field.getWall(tmpos.first, tmpos.second, Direction(com[3])));
+        commandLog.push_back(field->getWall(tmpos.first, tmpos.second, Direction(com[3])));
     } else if (com[0] == "add_wall") {
         tmpos = make_pair(stoi(com[1]), stoi(com[2]));
-        field.addWall(tmpos.first, tmpos.second, Direction(com[3]), com[4]);
+        field->addWall(tmpos.first, tmpos.second, Direction(com[3]), com[4]);
     } else if (com[0] == "do") {
         for (int i  = 2; i < com.size(); i++) {
             com[1] += " " + com[i];
@@ -337,8 +346,6 @@ void Server::doCommand(string command) {
     }
 }
 
-//function Update() {
-//}
 
 /*function OnGUI() {
     if (isConsoleOpen) {

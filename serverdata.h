@@ -11,17 +11,12 @@ public:
 
     int height;
     int width;
-    int maxSize = 30;
-    int maxCnt = 20;
-    int minSize = 1;
     LabyrinthData data;
 
-    void Start();
-
-    //function serverSettingsWindow();     //TODO окно для настроек
-        //числа: width, height, startAmmo, startLife, treasureCount
-        //флоаты от 0 до 1: количество стен wallProb, вероятность сокровищ в тупиках loveToilets, распределение сокровищ staticTreasureProb
-        //булы: можно ли ставить сокровища в одну клетку canPutTreasureTogether, рандомные ли сокровища useRandomTreasure
+    ServerData();
+    ServerData(int width, int height, int startAmmo,
+               int startLife, int keys, int bullets, int mines, float wallProb, float staticTreasureProb, float loveToiletsProb,
+               bool canPutTreasureTogether, bool useRandomTreasure);
 
 };
 

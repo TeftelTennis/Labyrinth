@@ -1,5 +1,8 @@
 #include "hostserver.h"
 #include "ui_hostserver.h"
+#include <iostream>
+
+using namespace std;
 
 HostServer::HostServer(QWidget *parent) :
     QDialog(parent),
@@ -23,12 +26,14 @@ void HostServer::on_menuButton_clicked()
 void HostServer::on_pushButton_clicked()
 {
     //TODO: Host server
+    ServerData serverData = ServerData(getWidth(), getHeight(), getStartAmmo(),
+                                       getStartLifes(), getKeys(), getBullets(), getMines(),
+                                       getWallProb(), getStaticTreasureProb(), getLoveToiletsProb(),
+                                                                canPutTreasureTogether(), useRandomTreasure());
     GameWindow *game = new GameWindow(this);
+    game->setParams(true, "lmao", getXCoor(), getYCoor(), serverData);
+    cerr << "paramsend";
     hide();
-    game->setParams(getWidth(), getHeight(), getXCoor(), getYCoor(), getStartAmmo(),
-                    getStartLifes(), getKeys(), getBullets(), getMines());
-    game->setParamsFloat(getWallProb(), getStaticTreasureProb(), getLoveToiletsProb(),
-                         canPutTreasureTogether(), useRandomTreasure());
     game->setWindowTitle("Labyrinth");
     game->setModal(true);
     game->exec();
@@ -72,15 +77,15 @@ int HostServer::getMines() {
 }
 
 float HostServer::getWallProb() {
-    return (ui->wallProb->value()) / 100;
+    return static_cast<double>(ui->wallProb->value()) / 100;
 }
 
 float HostServer::getStaticTreasureProb() {
-    return (ui->tresureProb->value()) / 100;
+    return static_cast<double>(ui->tresureProb->value()) / 100;
 }
 
 float HostServer::getLoveToiletsProb() {
-    return (ui->toiletProb->value()) / 100;
+    return static_cast<double>(ui->toiletProb->value()) / 100;
 }
 
 bool HostServer::canPutTreasureTogether() {

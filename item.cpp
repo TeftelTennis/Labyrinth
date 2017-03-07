@@ -13,8 +13,8 @@ string Item::tostring() {
 //infoWindow = [](int windowID) {
 //    GUILayout.Label("--EMPTY--");
 //};
-void Item::hitPlayer(Player player, Labyrinth field) {}
-void Item::useaa(Player player, Labyrinth field) {}
+void Item::hitPlayer(Player& player, Labyrinth* field) {}
+void Item::useaa(Player& player, Labyrinth* field) {}
 bool Item::hitWall(Direction direction) {return false;}
 
 Item::Item() {
@@ -32,7 +32,7 @@ Item::Item() {
 //    super();
 //}
 
-void Bullet::hitPlayer(Player player, Labyrinth field) {
+void Bullet::hitPlayer(Player& player, Labyrinth* field) {
     player.life--;
     player.alive = player.life > 0;
 }

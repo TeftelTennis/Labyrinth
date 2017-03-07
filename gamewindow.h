@@ -5,6 +5,8 @@
 #include <QtGui>
 #include <QtCore>
 #include "hostserver.h"
+#include "server.h"
+#include "serverdata.h"
 
 namespace Ui {
 class GameWindow;
@@ -18,40 +20,25 @@ public:
     GameWindow(QWidget *parent = 0);
     ~GameWindow();
 
-    int width;
-    int height;
     const int boxWidth = 15;
     const int wallWidth = 3;
     int summaryWidth;
     int summaryHeight;
-    int xCoors;
-    int yCoors;
-    int startAmmo;
-    int startLifes;
-    int keys;
-    int bullets;
-    int mines;
+    bool isServer;
+    string name;
 
-    float wallProb;
-    float staticTreasureProb;
-    float loveToiletsProb;
-
-    bool canPutTreasureTogether;
-    bool useRandomTreasure;
-
-    void setParams(int width, int height, int xCoors, int yCoors, int startAmmo,
-                   int startLifes, int keys, int bullets, int mines);
-    void setParamsFloat(float wallProb, float staticTreasureProb, float loveToiletsProb,
-                        bool canPutTreasureTogether, bool useRandomTreasure);
+    Server* server;
+    //Client client;
+    void setParams(bool isServer, string name, int x, int y, ServerData serverData);
     void keyPressEvent(QKeyEvent *key); //do smth depend on the key pressed
     void initialize(); //Drawing the start field, without any walls
     void update(); //update visual part????
-    void move(int direction);
+    void move(string direction);
     int movePlayer(int direction); //Move player
     int check(); //Check if smth at this position, like treasure or landmine
     void drawWall(int curXCoor, int curYCoor, int direction);
     void showTreasureText();
-    void shoot();
+    void shoot(string direction);
     void dig();
 
     void paintEvent(QPaintEvent *e); //show penis

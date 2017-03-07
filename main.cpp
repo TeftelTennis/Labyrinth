@@ -1,5 +1,6 @@
 
 #include "menuwindow.h"
+#include "labyrinth.h"
 #include <QApplication>
 #include <QtGui>
 
@@ -13,6 +14,7 @@ int main(int argc, char *argv[])
 //    MainWindow *w = new MainWindow();
 //    w->setWindowTitle("Some shit");
 //    w->show();
+
 
     MenuWindow menu;
     menu.exec();

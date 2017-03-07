@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     network.cpp \
     splitter.cpp \
     labyrinthobjectfactory.cpp\
-    trap.cpp
+    trap.cpp \
+    client.cpp
 
 HEADERS  += labyrinth.h \
     item.h \
@@ -62,7 +63,8 @@ HEADERS  += labyrinth.h \
     network.h \
     splitter.h \
     labyrinthobjectfactory.h \
-    trap.h
+    trap.h \
+    client.h
 
 FORMS    +=    joinserver.ui \
     menuwindow.ui \
@@ -70,3 +72,4 @@ FORMS    +=    joinserver.ui \
     gamewindow.ui
 
 RESOURCES +=   resources.qrc
+

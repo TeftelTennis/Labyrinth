@@ -1,31 +1,16 @@
 #include "gamewindow.h"
 #include "ui_gamewindow.h"
+#include <iostream>
+
+using namespace std;
 
 GameWindow::GameWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::GameWindow)
 {
     ui->setupUi(this);
-//    width = host.getWidth();
-//    height = host.getHeight();
-//    summaryWidth = width * boxWidth + (width - 1) * wallWidth;
-//    summaryHeight = height * boxWidth + (height - 1) * wallWidth;
+    cerr << "created";
 
-//    xCoors = host.getXCoor();
-//    yCoors = host.getYCoor();
-
-//    startAmmo = host.getStartAmmo();
-//    startLifes = host.getStartLifes();
-//    keys = host.getKeys();
-//    bullets = host.getBullets();
-//    mines = host.getMines();
-
-//    wallProb = host.getWallProb();
-//    staticTreasureProb = host.getStaticTreasureProb();
-//    loveToiletsProb = host.getLoveToiletsProb();
-
-//    canPutTreasureTogether = host.canPutTreasureTogether();
-//    useRandomTreasure = host.useRandomTreasure();
 }
 
 GameWindow::~GameWindow()
@@ -33,30 +18,25 @@ GameWindow::~GameWindow()
     delete ui;
 }
 
-void GameWindow::setParams(int width, int height, int xCoors, int yCoors, int startAmmo,
-               int startLifes, int keys, int bullets, int mines) {
-    this->width = width;
-    this->height = height;
-    summaryWidth = width * boxWidth + (width - 1) * wallWidth;
-    summaryHeight = height * boxWidth + (height - 1) * wallWidth;
+void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData serverData) {
 
-    this->xCoors = xCoors;
-    this->yCoors = yCoors;
-    this->startAmmo = startAmmo;
-    this->startLifes = startLifes;
-    this->keys = keys;
-    this->bullets = bullets;
-    this->mines = mines;
+      cerr << "paramsstart";
+    this->name = name;
+
+    this->isServer = isServer;
+    if (isServer) {
+        server = new Server(serverData);
+        server->addPlayer(x, y, name);
+        server->addPlayer(0, 1, "nigga");
+    }
+    else {
+        //client = Client(serverData);
+        //clientAddPlayer(name, x, y);
+    }
+    summaryWidth = serverData.width * boxWidth + (serverData.width - 1) * wallWidth;
+    summaryHeight = serverData.height * boxWidth + (serverData.height - 1) * wallWidth;
 }
 
-void GameWindow::setParamsFloat(float wallProb, float staticTreasureProb, float loveToiletsProb,
-                    bool canPutTreasureTogether, bool useRandomTreasure) {
-    this->wallProb = wallProb;
-    this->staticTreasureProb = staticTreasureProb;
-    this->loveToiletsProb = loveToiletsProb;
-    this->canPutTreasureTogether = canPutTreasureTogether;
-    this->useRandomTreasure = useRandomTreasure;
-}
 
 void GameWindow::keyPressEvent(QKeyEvent *key) {
     switch (key->key()) {
@@ -64,21 +44,30 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
             close();
             break;
         case Qt::Key_Up:
-            move(1);
+            move("up");
             break;
         case Qt::Key_Right:
-            move(2);
+            move("right");
             break;
         case Qt::Key_Left:
-            move(0);
+            move("left");
             break;
         case Qt::Key_Down:
-            move(3);
+            move("down");
             break;
-        case Qt::Key_D:
-            shoot();
+        case Qt::Key_W:
+            shoot("up");
             break;
         case Qt::Key_A:
+            shoot("left");
+            break;
+        case Qt::Key_S:
+            shoot("down");
+            break;
+        case Qt::Key_D:
+            shoot("right");
+            break;
+        case Qt::Key_Q:
             dig();
             break;
     }
@@ -93,7 +82,17 @@ void GameWindow::update() {
 
 }
 
-void GameWindow::move(int direction) {
+void GameWindow::move(string direction) {
+
+    if (isServer) {
+        server->move(name, direction);
+    }
+    else {
+        //
+    }
+
+
+    /*
     int i = movePlayer(direction);
     switch (i) {
         case 0:
@@ -110,7 +109,7 @@ void GameWindow::move(int direction) {
         case 3:
             //player life's -1 and checkIfDead()
             break;
-    }
+    }*/
 }
 
 int GameWindow::movePlayer(int direction) { //direction: 0 - left, 1 - up, 2 - right, 3 - down
@@ -133,11 +132,19 @@ void GameWindow::drawWall(int curXCoor, int curYCoor, int direction) {
 
 }
 
-void GameWindow::shoot() {
+void GameWindow::shoot(string direction) {
+    cerr << "shoot";
+    if (isServer) {
+        cerr << "shoot started\n";
+        server->shoot(name, direction, 3);
+    }
     //if killed someone then showKillText()
 }
 
 void GameWindow::dig() {
+    if (isServer) {
+        server->dig(name);
+    }
     //+1 to players stash
     //remove treasure sector from this position
 }

@@ -57,7 +57,7 @@ Player::Player(string Name, int Ammo, int playerLife) {
     }
 }
 
-void Player::take(Player corpse) {
+void Player::take(Player& corpse) {
     for (auto i : corpse.items) {
         items.push_back(i);
     }

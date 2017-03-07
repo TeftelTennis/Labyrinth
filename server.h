@@ -4,13 +4,15 @@
 #include "labyrinth.h"
 #include "trap.h"
 #include "labyrinthobjectfactory.h"
+#include "serverdata.h"
 
 #ifndef SERVER_H
 #define SERVER_H
 
 class Server {
+public:
     map<string, string> players;
-    Labyrinth field;
+    Labyrinth* field;
 
     int startAmmo = 3;
     int startLife = 1;
@@ -19,21 +21,15 @@ class Server {
     deque<string> turnQueue;
     string turnPlayer;
     deque<string> tmpQueue;
-    //ServerData serverData;
+    ServerData serverData;
     LabyrinthObjectFactory objectFactory;
 
-
-
-    bool isConsoleOpen = false;
     string command = "";
     vector<string> commandLog;
-    pair<int, int> scrollPosition = make_pair(0, 0);
-   bool consoleButtonPressed = false;
+    bool consoleButtonPressed = false;
 
-
-    void Start();
-
-    void initField(/*serverData*/);
+    Server(ServerData serverData);
+    Server();
 
     //Вход выход игроков
     void killPlayer(string name);
@@ -54,8 +50,6 @@ class Server {
     void startGame();
 
     void doCommand(string command);
-
-    void Update();
 
     void OnGUI();
 

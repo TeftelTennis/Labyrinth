@@ -6,7 +6,7 @@ string Trap::tostring() {
     return "trap: " + name;
 }
 
-void Trap::cought(Player player, Labyrinth field){}
+void Trap::cought(Player& player, Labyrinth* field){}
 
 Trap::Trap() {
     name = "empty";
@@ -15,7 +15,7 @@ Trap::Trap() {
 }
 
 
-void Landmine::cought(Player player, Labyrinth field) {
+void Landmine::cought(Player& player, Labyrinth* field) {
     player.life--;
     player.alive = (player.life > 0);
     remove();

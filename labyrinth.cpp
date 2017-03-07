@@ -4,12 +4,29 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <iostream>
+
 
 using namespace std;
 
 Labyrinth::Labyrinth(int w, int h) {
     this->w = w;
     this->h = h;
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < w + 1; j++) {
+            verticalWalls[i][j] = "empty";
+        }
+    }
+    for (int i = 0; i < h + 1; i++) {
+        for (int j = 0; j < w; j++) {
+            horizontWalls[i][j] = "empty";
+        }
+    }
+}
+Labyrinth::Labyrinth() {
+    cerr << "WTF";
+    this->w = 10;
+    this->h = 10;
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w + 1; j++) {
             verticalWalls[i][j] = "empty";
@@ -135,10 +152,11 @@ void Labyrinth:: makeBorder() {
 
 
 void Labyrinth::create() {
-    DSU dsu = DSU(w, h);
+    DSU* dsu = new DSU(w, h);
+
 
     //Строит рандомный остов.
-    while (dsu.k > 1) {
+    while (dsu->k > 1) {
         int i = rand() % h;
         int j = rand() % w;
         int k = rand() % 4;
@@ -147,15 +165,14 @@ void Labyrinth::create() {
         //var k : int = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, 4 - 0.5 - float.Epsilon));
         pair<int, int> newPos = move(i, j, Direction(k));
         if (checkPos(newPos.first, newPos.second)) {
-            int lastk = dsu.k;
-            dsu.merge(i, j, newPos.first, newPos.second);
-            if (lastk > dsu.k) {
+            int lastk = dsu->k;
+            dsu->merge(i, j, newPos.first, newPos.second);
+            if (lastk > dsu->k) {
                 wasWall[i][j][k] = true;
                 wasWall[newPos.first][newPos.second][(k + 2) % 4] = true;
             }
         }
     }
-
     //Ставит  остальные стены
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {

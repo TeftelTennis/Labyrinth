@@ -9,6 +9,8 @@ GameWindow::GameWindow(QWidget *parent) :
     ui(new Ui::GameWindow)
 {
     ui->setupUi(this);
+    scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
     cerr << "created";
 
 }
@@ -16,6 +18,14 @@ GameWindow::GameWindow(QWidget *parent) :
 GameWindow::~GameWindow()
 {
     delete ui;
+}
+
+int GameWindow::getPosFromXCoor() {
+    return 10 + (xCoors - 1) * (boxWidth + wallWidth);
+}
+
+int GameWindow::getPosFromYCoor() {
+    return 10 + (yCoors - 1) * (boxWidth + wallWidth);
 }
 
 void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData serverData) {
@@ -35,6 +45,13 @@ void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData 
     }
     summaryWidth = serverData.width * boxWidth + (serverData.width - 1) * wallWidth;
     summaryHeight = serverData.height * boxWidth + (serverData.height - 1) * wallWidth;
+    xCoors = x;
+    yCoors = y;
+    keys = 0;
+    bullets = serverData.startAmmo;
+    width = serverData.width;
+    height = serverData.height;
+    initialize();
 }
 
 
@@ -76,47 +93,163 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
 void GameWindow::initialize() {
     //creates a new field for current player
     //menu AlignRight with keys description
+    QBrush blueBrush = QBrush(Qt::blue);
+    QBrush brush = QBrush(0xcfbea5);
+
+    QPen myPen = QPen(Qt::black);
+    myPen.setWidth(5);
+
+    scene->addRect(10, 10, summaryWidth, summaryHeight, myPen, brush);
+    menu = scene->addRect(summaryWidth + 50, 10, 200, 500, myPen, QBrush(Qt::gray));
+
+    controls = scene->addText("Controls: ", QFont("Times", 16, QFont::Bold));
+    wsad = scene->addText("WSAD -- move");
+    sh = scene->addText("K -- shoot");
+    dg = scene->addText("L -- dig");
+    inventory = scene->addText("Inventory", QFont("Times", 16, QFont::Bold));
+    QGraphicsTextItem *keyText = scene->addText("Keys", QFont("Times", 13, QFont::Bold));
+    QGraphicsTextItem *bulletText = scene->addText("Bullets", QFont("Times", 13, QFont::Bold));
+    QFont font("Times", 16, QFont::Bold);
+    treasureText = scene->addText("TREASURE!", font);
+    treasureText->setDefaultTextColor(Qt::red);
+    keyNum = scene->addText(QString::number(keys), QFont("Times", 16));
+    bulletNum = scene->addText(QString::number(bullets), QFont("Times", 16));
+
+    controls->setPos(100 + summaryWidth, 20);
+    inventory->setPos(100 + summaryWidth, 120);
+    wsad->setPos(90 + summaryWidth, 50);
+    sh->setPos(90 + summaryWidth, 70);
+    dg->setPos(90 + summaryWidth, 90);
+    keyText->setPos(110 + summaryWidth, 170);
+    bulletText->setPos(110 + summaryWidth, 220);
+    treasureText->setPos(90 + summaryWidth, 400);
+    treasureText->hide();
+    keyNum->setPos(197 + summaryWidth, 170);
+    bulletNum->setPos(197 + summaryWidth, 220);
+
+
+    for (int i = 0; i < 3; i++) {
+        QLineF line(185 + summaryWidth, 160 + i * 50, 235 + summaryWidth, 160 + i * 50);
+        scene->addLine(line, QPen(Qt::black));
+    }
+
+    for (int i = 0; i < 2; i++) {
+        QLineF line(185 + summaryWidth + i * 50, 160, 185 + summaryWidth + i * 50, 260);
+        scene->addLine(line, QPen(Qt::black));
+    }
+
+    for (int i = 1; i < width; i++) {
+        int x = 10 + i * (boxWidth + wallWidth);
+        QLineF line(x - wallWidth, 10, x - wallWidth, 10 + summaryHeight);
+        QLineF line2(x, 10, x, 10 + summaryHeight);
+        scene->addLine(line, myPen);
+        scene->addLine(line2, myPen);
+    }
+
+    for (int i = 1; i < height; i++) {
+        int y = 10 + i * (boxWidth + wallWidth);
+        QLineF line(10, y - wallWidth, 10 + summaryWidth, y - wallWidth);
+        QLineF line2(10, y, 10 + summaryWidth, y);
+        scene->addLine(line, myPen);
+        scene->addLine(line2, myPen);
+    }
+    myPen.setWidth(3);
+    playerIcon = scene->addEllipse(getPosFromXCoor() + 5, getPosFromYCoor() + 5, 40, 40, myPen, blueBrush);
+
 }
 
 void GameWindow::update() {
+    playerXCoor = getPosFromXCoor();
+    playerYCoor = getPosFromYCoor();
+    QPen myPen = QPen(Qt::black);
+    myPen.setWidth(3);
+    QBrush blueBrush = QBrush(Qt::blue);
+    scene->removeItem((QGraphicsItem*) playerIcon);
+    playerIcon = scene->addEllipse(playerXCoor + 5, playerYCoor + 5, 40, 40, myPen, blueBrush);
+}
 
+void GameWindow::updateInfo() {
+    scene->removeItem((QGraphicsItem*) keyNum);
+    scene->removeItem((QGraphicsItem*) bulletNum);
+    keyNum = scene->addText(QString::number(keys), QFont("Times", 16));
+    bulletNum = scene->addText(QString::number(bullets), QFont("Times", 16));
+    if (check() == 1) {
+        showTreasureText();
+    } else {
+        hideTreasureText();
+    }
 }
 
 void GameWindow::move(string direction) {
-
-    if (isServer) {
-        server->move(name, direction);
-    }
-    else {
-        //
-    }
-
-
-    /*
     int i = movePlayer(direction);
+    int dir;
+    if (direction == "left") {
+        dir = 0;
+    } else if (direction == "up") {
+        dir = 1;
+    } else if (direction == "right") {
+        dir = 2;
+    } else {
+        dir = 3;
+    }
     switch (i) {
         case 0:
-            //moving the player depends on direction
+            switch (dir) {
+            case 0:
+                xCoors--;
+                break;
+            case 1:
+                yCoors--;
+                break;
+            case 2:
+                xCoors++;
+                break;
+            case 3:
+                yCoors++;
+                break;
+            }
+
             update();
             break;
         case 1:
-            drawWall(xCoors, yCoors, direction);
+            drawWall(xCoors, yCoors, dir);
             break;
         case 2:
-            //some func moving player
+            switch (dir) {
+            case 0:
+                xCoors--;
+                break;
+            case 1:
+                yCoors--;
+                break;
+            case 2:
+                xCoors++;
+                break;
+            case 3:
+                yCoors++;
+                break;
+            }
+
+            update();
             showTreasureText();
             break;
         case 3:
             //player life's -1 and checkIfDead()
             break;
-    }*/
+    }
 }
 
-int GameWindow::movePlayer(int direction) { //direction: 0 - left, 1 - up, 2 - right, 3 - down
+int GameWindow::movePlayer(string direction) { //direction: 0 - left, 1 - up, 2 - right, 3 - down
     //return 0 if player can get to that direction
     //return 1 if there is a wall
     //return 2 if we can move and there is a treasure
     //return 3 if we can move and there is a mine
+    if (isServer) {
+        /* return */ server->move(name, direction);
+    }
+    else {
+        //
+    }
     return 0;
 }
 
@@ -129,7 +262,44 @@ int GameWindow::check() {
 }
 
 void GameWindow::drawWall(int curXCoor, int curYCoor, int direction) {
-
+    if ((curXCoor == 1 && direction == 0) || (curXCoor == width && direction == 2) ||
+            (curYCoor == 1 && direction == 1) || (curYCoor == height && direction == 3)) {
+        return;
+    }
+    QPen pen = QPen(Qt::black);
+    pen.setWidth(10);
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+    switch (direction) {
+        case 0:
+            x1 = getPosFromXCoor() - 5;
+            y1 = getPosFromYCoor() - 5;
+            x2 = x1;
+            y2 = y1 + 60;
+            break;
+        case 1:
+            x1 = getPosFromXCoor() - 5;
+            y1 = getPosFromYCoor() - 5;
+            x2 = x1 + 60;
+            y2 = y1;
+            break;
+        case 2:
+            x1 = getPosFromXCoor() + 55;
+            y1 = getPosFromYCoor() - 5;
+            x2 = x1;
+            y2 = y1 + 60;
+            break;
+        case 3:
+            x1 = getPosFromXCoor() - 5;
+            y1 = getPosFromYCoor() + 55;
+            x2 = x1 + 60;
+            y2 = y1;
+            break;
+    }
+    QLineF line(x1, y1, x2, y2);
+    scene->addLine(line, pen);
 }
 
 void GameWindow::shoot(string direction) {
@@ -145,24 +315,15 @@ void GameWindow::dig() {
     if (isServer) {
         server->dig(name);
     }
+    hideTreasureText();
     //+1 to players stash
     //remove treasure sector from this position
 }
 
 void GameWindow::showTreasureText() {
-    //Shows treasureText();
+    treasureText->show();
 }
 
-void GameWindow::paintEvent(QPaintEvent *e) {
-    QPainter painter(this);
-
-    painter.drawLine(50, 100, 100, 100);
-    painter.drawLine(75, 100, 75, 75);
-    painter.drawLine(50, 100, 50, 75);
-    painter.drawLine(100, 100, 100, 75);
-    painter.drawLine(50, 75, 100, 75);
-    painter.drawLine(65, 75, 65, 10);
-    painter.drawLine(85, 75, 85, 10);
-    painter.drawLine(65, 10, 85, 10);
-    painter.drawLine(65, 20, 85, 20);
+void GameWindow::hideTreasureText() {
+    treasureText->hide();
 }

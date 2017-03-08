@@ -61,7 +61,7 @@ public:
 
     bool wait = false;
 
-    Start () {
+    void Start () {
         //DontDestroyOnLoad(gameObject);
         //serverData = GameObject.Find("Server Data").GetComponent(ServerData);
         //objectFactory = GameObject.Find("ObjectFactory").GetComponent(LabyrinthObjectFactory);

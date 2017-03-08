@@ -39,7 +39,7 @@
     <string>Host Server</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -59,26 +59,26 @@
     <item>
      <widget class="QLineEdit" name="xCoors">
       <property name="text">
-       <string>0</string>
+       <string>1</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QLineEdit" name="yCoors">
       <property name="text">
-       <string>0</string>
+       <string>1</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>170</x>
      <y>10</y>
      <width>211</width>
-     <height>71</height>
+     <height>75</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -110,6 +110,9 @@
             <property name="maximum">
              <number>30</number>
             </property>
+            <property name="value">
+             <number>6</number>
+            </property>
            </widget>
           </item>
          </layout>
@@ -130,6 +133,9 @@
             </property>
             <property name="maximum">
              <number>30</number>
+            </property>
+            <property name="value">
+             <number>6</number>
             </property>
            </widget>
           </item>
@@ -181,13 +187,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>120</y>
      <width>361</width>
-     <height>71</height>
+     <height>77</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -287,7 +293,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -309,6 +315,9 @@
       <property name="maximum">
        <number>100</number>
       </property>
+      <property name="value">
+       <number>30</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -317,19 +326,19 @@
     <item>
      <widget class="QProgressBar" name="progressBar">
       <property name="value">
-       <number>0</number>
+       <number>30</number>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>190</y>
      <width>361</width>
-     <height>51</height>
+     <height>54</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_13">
@@ -395,43 +404,13 @@
     </item>
    </layout>
   </widget>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
   <zorder>menuButton</zorder>
   <zorder>pushButton</zorder>
-  <zorder>xCoors</zorder>
-  <zorder>yCoors</zorder>
-  <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>label_3</zorder>
-  <zorder>label_4</zorder>
-  <zorder>label_5</zorder>
-  <zorder>label_6</zorder>
-  <zorder>widthSpinbox</zorder>
-  <zorder>heightSpinbox</zorder>
-  <zorder>ammoSpinbox</zorder>
-  <zorder>lifeSpinbox</zorder>
-  <zorder>label_7</zorder>
-  <zorder>wallProb</zorder>
-  <zorder>progressBar</zorder>
-  <zorder>label_8</zorder>
-  <zorder>treasureTogether</zorder>
-  <zorder>randomTreasure</zorder>
-  <zorder>label_9</zorder>
-  <zorder>label_10</zorder>
-  <zorder>keysSpinbox</zorder>
-  <zorder>bulletsSpinbox</zorder>
-  <zorder>label_8</zorder>
-  <zorder>label_8</zorder>
-  <zorder>label_11</zorder>
-  <zorder>minesSpinbox</zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder>label_11</zorder>
-  <zorder>label_12</zorder>
-  <zorder>label_13</zorder>
-  <zorder>tresureProb</zorder>
-  <zorder>toiletProb</zorder>
-  <zorder>progressBar_2</zorder>
-  <zorder>progressBar_3</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
  </widget>
  <resources/>
  <connections>

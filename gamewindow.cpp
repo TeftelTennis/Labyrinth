@@ -45,8 +45,9 @@ void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData 
     }
     summaryWidth = serverData.width * boxWidth + (serverData.width - 1) * wallWidth;
     summaryHeight = serverData.height * boxWidth + (serverData.height - 1) * wallWidth;
-    xCoors = x;
-    yCoors = y;
+    this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
+    xCoors = x + 1;
+    yCoors = serverData.height - 1;
     keys = 0;
     bullets = serverData.startAmmo;
     width = serverData.width;
@@ -60,28 +61,28 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
         case Qt::Key_Escape:
             close();
             break;
-        case Qt::Key_Up:
+        case Qt::Key_W:
             move("up");
             break;
-        case Qt::Key_Right:
-            move("right");
-            break;
-        case Qt::Key_Left:
+        case Qt::Key_A:
             move("left");
             break;
-        case Qt::Key_Down:
-            move("down");
-            break;
-        case Qt::Key_W:
-            shoot("up");
-            break;
-        case Qt::Key_A:
-            shoot("left");
+        case Qt::Key_D:
+            move("right");
             break;
         case Qt::Key_S:
+            move("down");
+            break;
+        case Qt::Key_I:
+            shoot("up");
+            break;
+        case Qt::Key_J:
+            shoot("left");
+            break;
+        case Qt::Key_K:
             shoot("down");
             break;
-        case Qt::Key_D:
+        case Qt::Key_L:
             shoot("right");
             break;
         case Qt::Key_Q:
@@ -104,8 +105,8 @@ void GameWindow::initialize() {
 
     controls = scene->addText("Controls: ", QFont("Times", 16, QFont::Bold));
     wsad = scene->addText("WSAD -- move");
-    sh = scene->addText("K -- shoot");
-    dg = scene->addText("L -- dig");
+    sh = scene->addText("IKJL -- shoot (WSAD)");
+    dg = scene->addText("Q -- dig");
     inventory = scene->addText("Inventory", QFont("Times", 16, QFont::Bold));
     QGraphicsTextItem *keyText = scene->addText("Keys", QFont("Times", 13, QFont::Bold));
     QGraphicsTextItem *bulletText = scene->addText("Bullets", QFont("Times", 13, QFont::Bold));
@@ -184,28 +185,28 @@ void GameWindow::move(string direction) {
     int i = movePlayer(direction);
     int dir;
     if (direction == "left") {
-        dir = 0;
-    } else if (direction == "up") {
         dir = 1;
+    } else if (direction == "up") {
+        dir = 0;
     } else if (direction == "right") {
-        dir = 2;
-    } else {
         dir = 3;
+    } else {
+        dir = 2;
     }
     switch (i) {
         case 0:
             switch (dir) {
             case 0:
-                xCoors--;
-                break;
-            case 1:
                 yCoors--;
                 break;
+            case 1:
+                xCoors--;
+                break;
             case 2:
-                xCoors++;
+                yCoors++;
                 break;
             case 3:
-                yCoors++;
+                xCoors++;
                 break;
             }
 
@@ -217,16 +218,16 @@ void GameWindow::move(string direction) {
         case 2:
             switch (dir) {
             case 0:
-                xCoors--;
-                break;
-            case 1:
                 yCoors--;
                 break;
+            case 1:
+                xCoors--;
+                break;
             case 2:
-                xCoors++;
+                yCoors++;
                 break;
             case 3:
-                yCoors++;
+                xCoors++;
                 break;
             }
 
@@ -239,7 +240,7 @@ void GameWindow::move(string direction) {
     }
 }
 
-int GameWindow::movePlayer(string direction) { //direction: 0 - left, 1 - up, 2 - right, 3 - down
+int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 - down, 3 - right
     //return 0 if player can get to that direction
     //return 1 if there is a wall
     //return 2 if we can move and there is a treasure

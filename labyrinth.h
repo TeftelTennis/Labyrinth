@@ -37,7 +37,7 @@ public:
     tuple<int, int, int> findPlayer(string name);
     void movePlayer(string name, Direction direct);
     void killPlayer(string name);
-    void addObject(int i, int j, LabyrinthObject item) ;
+    void addObject(int i, int j, LabyrinthObject* item) ;
     void makeBorder();
     void create();
 };

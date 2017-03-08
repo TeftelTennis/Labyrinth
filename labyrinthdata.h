@@ -17,6 +17,8 @@ public:
     double loveToilets; // Если хочет ставить в сартр
     double staticTreasureProb;
     bool canPutTreasureTogether;
+
+
 };
 
 #endif // LABYRINTHDATA_H

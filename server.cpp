@@ -219,6 +219,13 @@ void Server::shoot(string nameP, string direct, int item) {
 }
 
 void Server::dig(string nameP) {
+    cerr << "CELLS\n";
+    for (int i = 0; i < field->w; i++) {
+        for (int j = 0; j < field->h; j++) {
+            cerr << field->cell[i][j].size() << " ";
+        }
+        cerr << "\n";
+    }
     string result = "";
     string nameNext;
     tuple<int, int, int> playerPos = field->findPlayer(nameP);
@@ -227,6 +234,7 @@ void Server::dig(string nameP) {
     bool findEmpty = false;
 
     for (auto it : field->cell[get<0>(playerPos)][get<1>(playerPos)]) {
+        cerr << "type: " << it->type <<'\n';
         if (it->type == LabyrinthObject::TYPE_TREASURE) {
             treasures.push_back(static_cast<Treasure*>(it));
         }
@@ -236,6 +244,7 @@ void Server::dig(string nameP) {
     Item* item;
     Trap* trap;
     for (auto treasure : treasures) {
+        //cerr << treasure->content->type << " - TYPE \n";
         if (treasure->content->type == LabyrinthObject::TYPE_TRAP) {
             result += " 1";
             trap = static_cast<Trap*>(treasure->content);
@@ -260,7 +269,7 @@ void Server::dig(string nameP) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    cerr<< "dig";
+    cerr<< "dig " << result << "\n";
     //sendResultOfTurn(nameP, "dig", result, nameNext);
 }
 
@@ -319,12 +328,12 @@ void Server::doCommand(string command) {
         if (com[3] == "trap") {
             int ololo = stoi(com[4]);
             Trap* tt = static_cast<Trap*>(objectFactory.createTrap(ololo));
-            field->addObject(tmpos.first, tmpos.second, *tt);
+            field->addObject(tmpos.first, tmpos.second, tt);
         } else if (com[3] == "treasure"){
             if (com[4] == "trap") {
-                field->addObject(tmpos.first, tmpos.second, Treasure(*static_cast<Trap*>(objectFactory.createTrap(stoi(com[5])))));
+                field->addObject(tmpos.first, tmpos.second, new Treasure(*static_cast<Trap*>(objectFactory.createTrap(stoi(com[5])))));
             } else if (com[4] == "item") {
-                field->addObject(tmpos.first, tmpos.second, Treasure(*static_cast<Item*>(objectFactory.createItem(stoi(com[5])))));
+                field->addObject(tmpos.first, tmpos.second, new Treasure(*static_cast<Item*>(objectFactory.createItem(stoi(com[5])))));
             }
         }
     } else if (com[0] == "get") {

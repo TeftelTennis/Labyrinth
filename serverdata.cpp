@@ -20,9 +20,8 @@ ServerData::ServerData(int width, int height, int startAmmo,
     data.useRandomTreasure = useRandomTreasure;
 
     data.treasures = vector<Treasure>();
-    data.treasures.push_back(Treasure(Key()));
-    data.treasures.push_back(Treasure(Bullet()));
-    data.treasures.push_back(Treasure(Landmine()));
+
+    //генерация трежаров (просто запихиваем new тип() в вектор)
 
 
     cerr << "serverdataend";

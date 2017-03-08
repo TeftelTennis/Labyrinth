@@ -132,11 +132,11 @@ void Labyrinth::killPlayer(string name) {
     player->alive = false;
 }
 
-void Labyrinth::addObject(int i, int j, LabyrinthObject item) {
-    item.i = i;
-    item.j = j;
-    item.k = cell[i][j].size();
-    cell[i][j].push_back(&item);
+void Labyrinth::addObject(int i, int j, LabyrinthObject* item) {
+    item->i = i;
+    item->j = j;
+    item->k = cell[i][j].size();
+    cell[i][j].push_back(item);
 }
 
 void Labyrinth:: makeBorder() {
@@ -190,15 +190,16 @@ void Labyrinth::create() {
     int pos = 0;
 
     //Put treasures
-    for (int i = 0; i <= data.treasureCount; i++) {
-        Treasure treasure;
-        if (i == 0)
-            treasure = Treasure(Key());
+    for (int i = 0; i <= data.treasures.size(); i++) {
+        Treasure* treasure;
+        if (i == 0) {
+            treasure = new Treasure(Key());
+        }
         else
             if (data.useRandomTreasure) {
-                treasure = data.treasures[rand() % data.treasures.size()];
+                treasure = &data.treasures[rand() % data.treasures.size()];
             } else {
-                treasure = data.treasures[pos++];
+                treasure = &data.treasures[pos++];
             }
         pair<int, int> treasurePos;
         int seed = 0; // How many times you tried to choose

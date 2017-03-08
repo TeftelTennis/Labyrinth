@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>250</y>
+     <y>290</y>
      <width>141</width>
      <height>51</height>
     </rect>
@@ -30,7 +30,7 @@
    <property name="geometry">
     <rect>
      <x>260</x>
-     <y>250</y>
+     <y>290</y>
      <width>141</width>
      <height>51</height>
     </rect>
@@ -187,49 +187,84 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>120</y>
      <width>361</width>
-     <height>77</height>
+     <height>169</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_9">
+   <layout class="QVBoxLayout" name="verticalLayout_13">
     <item>
-     <widget class="QLabel" name="label_8">
-      <property name="text">
-       <string>Treasure settings:</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Prob of walls:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="wallProb">
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>30</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
+         <number>30</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_12">
+     <layout class="QVBoxLayout" name="verticalLayout_9">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_8">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Treasure settings:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="QCheckBox" name="treasureTogether">
-                <property name="text">
-                 <string>Can put treasures together</string>
-                </property>
-                <property name="checked">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="randomTreasure">
-                <property name="text">
-                 <string>Random Treasure</string>
-                </property>
-               </widget>
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <item>
+                 <widget class="QCheckBox" name="treasureTogether">
+                  <property name="text">
+                   <string>Can put treasures together</string>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="randomTreasure">
+                  <property name="text">
+                   <string>Random Treasure</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>
@@ -237,53 +272,53 @@
           </item>
          </layout>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_11">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Keys:</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Keys:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="keysSpinbox"/>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QSpinBox" name="keysSpinbox"/>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_10">
+                <property name="text">
+                 <string>Bullets:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="bulletsSpinbox"/>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel" name="label_11">
               <property name="text">
-               <string>Bullets:</string>
+               <string>Mines:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="bulletsSpinbox"/>
+             <widget class="QSpinBox" name="minesSpinbox"/>
             </item>
            </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <item>
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Mines:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="minesSpinbox"/>
           </item>
          </layout>
         </item>
@@ -291,116 +326,95 @@
       </item>
      </layout>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_10">
+        <item>
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>Tresure prob:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Treasure in toilet prob:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_11">
+        <item>
+         <widget class="QSlider" name="tresureProb">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="toiletProb">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <widget class="QProgressBar" name="progressBar_2">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progressBar_3">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>90</y>
-     <width>361</width>
-     <height>24</height>
+     <width>225</width>
+     <height>22</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_6">
+   <layout class="QHBoxLayout" name="horizontalLayout_14">
     <item>
-     <widget class="QLabel" name="label_7">
+     <widget class="QLabel" name="label_14">
       <property name="text">
-       <string>Prob of walls:</string>
+       <string>Enter your name:</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QSlider" name="wallProb">
-      <property name="maximum">
-       <number>100</number>
-      </property>
-      <property name="value">
-       <number>30</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+     <widget class="QLineEdit" name="nameLine">
+      <property name="text">
+       <string>Player</string>
       </property>
      </widget>
-    </item>
-    <item>
-     <widget class="QProgressBar" name="progressBar">
-      <property name="value">
-       <number>30</number>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>190</y>
-     <width>361</width>
-     <height>54</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_13">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_10">
-      <item>
-       <widget class="QLabel" name="label_13">
-        <property name="text">
-         <string>Tresure prob:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Treasure in toilet prob:</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_11">
-      <item>
-       <widget class="QSlider" name="tresureProb">
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSlider" name="toiletProb">
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_12">
-      <item>
-       <widget class="QProgressBar" name="progressBar_2">
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QProgressBar" name="progressBar_3">
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>
@@ -411,6 +425,8 @@
   <zorder>pushButton</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
+  <zorder>label_14</zorder>
+  <zorder>nameLine</zorder>
  </widget>
  <resources/>
  <connections>

@@ -45,6 +45,7 @@ void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData 
     }
     summaryWidth = serverData.width * boxWidth + (serverData.width - 1) * wallWidth;
     summaryHeight = serverData.height * boxWidth + (serverData.height - 1) * wallWidth;
+    this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
     xCoors = x;
     yCoors = y;
     keys = 0;

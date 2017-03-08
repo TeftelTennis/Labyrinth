@@ -23,8 +23,8 @@ public:
     GameWindow(QWidget *parent = 0);
     ~GameWindow();
 
-    const int boxWidth = 15;
-    const int wallWidth = 3;
+    const int boxWidth = 50;
+    const int wallWidth = 10;
     int summaryWidth;
     int summaryHeight;
     int xCoors;

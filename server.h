@@ -39,11 +39,11 @@ public:
     void addPlayer(int i, int j, string nameP);
 
     //Обрабатывает движение игрока
-    void move(string nameP, string direct);
+    string move(string nameP, string direct);
 
-    void shoot(string nameP, string direct, int item);
+    string shoot(string nameP, string direct, int item);
 
-    void dig(string nameP);
+    string dig(string nameP);
 
     void doTurn(string turn, string nameP);
 

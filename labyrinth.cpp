@@ -173,6 +173,7 @@ void Labyrinth::create() {
             }
         }
     }
+    //cerr << "wallProb = " << data.wallProb;
     //Ставит  остальные стены
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
@@ -180,6 +181,7 @@ void Labyrinth::create() {
                 if (!wasWall[i][j][k]) {
                     float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
                     if (random < data.wallProb) {
+                        //cerr << "adddddd";
                         addWall(i, j, Direction(k), "wall");
                     }
                 }

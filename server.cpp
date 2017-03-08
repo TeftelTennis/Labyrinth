@@ -19,7 +19,6 @@ Server::Server(ServerData serverData) {
 
     field->data = serverData.data;
 
-
     field->create();
 
     turnQueue.clear();
@@ -64,7 +63,7 @@ void Server::addPlayer(int i, int j, string nameP) {
 }
 
 //Обрабатывает движение игрока
-void Server::move(string nameP, string direct) {
+string Server::move(string nameP, string direct) {
     Direction direction = Direction(direct);
     string result;
     string nameNext;
@@ -143,10 +142,10 @@ void Server::move(string nameP, string direct) {
     }
     cerr << result << "\n\n";
     turnPlayer = nameNext;
-    //sendResultOfTurn(nameP, "move " + direct, result, nameNext);
+    return nameP + "$move " + direct + "$" +  result + "$" + nameNext;
 }
 
-void Server::shoot(string nameP, string direct, int item) {
+string Server::shoot(string nameP, string direct, int item) {
     Direction direction = Direction(direct);
     string result = "";
     string nameNext;
@@ -214,11 +213,10 @@ void Server::shoot(string nameP, string direct, int item) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    std::cerr << result << " - shoot\n";
-    //netAdmin.sendResultOfTurn(nameP, "shoot " + direct + ' ' + item.ToString(), result, nameNext);
+    return nameP + "$" + "shoot " + direct + " " + to_string(item) + "$" + result + "$" + nameNext;
 }
 
-void Server::dig(string nameP) {
+string Server::dig(string nameP) {
     cerr << "CELLS\n";
     for (int i = 0; i < field->w; i++) {
         for (int j = 0; j < field->h; j++) {
@@ -269,8 +267,7 @@ void Server::dig(string nameP) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    cerr<< "dig " << result << "\n";
-    //sendResultOfTurn(nameP, "dig", result, nameNext);
+    return nameP + "$" + "dig" + result + "$" + nameNext;
 }
 
 void Server::doTurn(string turn, string nameP) {

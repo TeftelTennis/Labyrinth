@@ -246,10 +246,19 @@ int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 
     //return 2 if we can move and there is a treasure
     //return 3 if we can move and there is a mine
     if (isServer) {
-        /* return */ server->move(name, direction);
+        string result = server->move(name, direction);
+        //sendtoall(result);
+        //string parsedresult[2] = splitter::split('$', 2, result);
+        //cerr << "parseresult - " << parsedresult[0];
+        //if (parsedresult[0] == "move") {
+        //    return 0;
+        //}
+        //else {
+        //    return 1;
+        //}
     }
     else {
-        //
+        //serverDoTask;
     }
     return 0;
 }

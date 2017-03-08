@@ -10,6 +10,7 @@
 #include "hostserver.h"
 #include "server.h"
 #include "serverdata.h"
+#include "gamelog.h"
 
 namespace Ui {
 class GameWindow;
@@ -36,12 +37,22 @@ public:
     int keys;
     int bullets;
     bool isServer;
+    bool isMyWindow;
     string name;
 
     Server* server;
     //Client client;
     int getPosFromXCoor();
     int getPosFromYCoor();
+    int getPosFromXCoors(int x);
+    int getPosFromYCoors(int y);
+
+    void drawLines(int width, int height, int sumWidth, int sumHeight);
+    void drawField(GameLog *gamelog);
+    void drawMyWindow(GameLog *gamelog);
+    void drawEnemy(GameLog *gamelog);
+    void drawPath(vector<Direction> directions, int x, int y);
+
     void setParams(bool isServer, string name, int x, int y, ServerData serverData);
     void keyPressEvent(QKeyEvent *key); //do smth depend on the key pressed
     void initialize(); //Drawing the start field, without any walls

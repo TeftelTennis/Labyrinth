@@ -11,6 +11,7 @@
 #include "server.h"
 #include "serverdata.h"
 #include "gamelog.h"
+#include "splitter.h"
 
 namespace Ui {
 class GameWindow;
@@ -60,6 +61,7 @@ public:
     void keyPressEvent(QKeyEvent *key); //do smth depend on the key pressed
     void initialize(); //Drawing the start field, without any walls
     void update(); //update visual part????
+    void doResultOfTurn(string turnn);
     void updateInfo();
     void move(string direction);
     int movePlayer(string direction); //Move player

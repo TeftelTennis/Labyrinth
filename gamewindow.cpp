@@ -240,11 +240,11 @@ void GameWindow::updateInfo() {
     scene->removeItem((QGraphicsItem*) bulletNum);
     keyNum = scene->addText(QString::number(keys), QFont("Times", 16));
     bulletNum = scene->addText(QString::number(bullets), QFont("Times", 16));
-    if (check() == 1) {
-        showTreasureText();
-    } else {
-        hideTreasureText();
-    }
+//    if (check() == 1) {
+//        showTreasureText();
+//    } else {
+//        hideTreasureText();
+//    }
 }
 
 void GameWindow::move(string direction) {
@@ -351,26 +351,26 @@ void GameWindow::dig() {
 }
 
 
-void doResultOfTurn(string turn) {
-    vector<string> turn = splitter::split(' ', 100, turn);
+void GameWindow::doResultOfTurn(string turnn) {
+    vector<string> turn = splitter::split(' ', 100, turnn);
     string nameP = turn[0];
     int curlog;
-    for (int i = 0; i < gamelohs.size(); i++) {
-        if (gamelogs[i].player->name == nameP) {
+    for (int i = 0; i < gamelogs.size(); i++) {
+        if (gamelogs[i].player.name == nameP) {
             curlog = i;
         }
     }
     string tolog = nameP;
     if (turn[1] == "move") {
         if (turn[3] == "wall") {
-            tolog += "cannot move to " << turn[2] << " because of wall";
+            tolog += "cannot move to " + turn[2] + " because of wall";
             gamelogs[curlog].addWall(Direction(turn[2]), "wall");
         } else if (turn[3] == "move") {
-            tolog += "moves to " << turn[2];
+            tolog += "moves to " + turn[2];
             gamelogs[curlog].addMove(Direction(turn[2]));
             int corpseCount = stoi(result[4]);
             if (corpseCount != 0) {
-                tolog += " there are " << corpseCount << " corpses: ";
+                tolog += " there are " + corpseCount + " corpses: ";
             }
             for (int it = 0; it < corpseCount; it++) {
                 string name  = result[5 + it];
@@ -378,7 +378,7 @@ void doResultOfTurn(string turn) {
             }
             int trapCount  = stoi(result[5 + corpseCount]);
             if (corpseCount != 0) {
-                tolog += " there are " << trapCount << " traps";
+                tolog += " there are " + trapCount + " traps";
             }
             if (result[6 + corpseCount + trapCount] == "1") {
                 tolog += " and founds a SECRET place";
@@ -397,7 +397,7 @@ void doResultOfTurn(string turn) {
         }
     } else if (turn[1] == "dig") {
         int count = stoi(result[2]);
-        tolog += " digs " << count << " items";
+        tolog += " digs " + count + " items";
     }
     logs.push_back(tolog);
 }

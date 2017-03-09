@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>646</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,30 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QGraphicsView" name="graphicsView"/>
+   </item>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>1000</height>
+      </size>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>298</width>
+        <height>296</height>
+       </rect>
+      </property>
+      <zorder>graphicsView</zorder>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>

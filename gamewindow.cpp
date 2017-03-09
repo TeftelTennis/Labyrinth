@@ -11,6 +11,14 @@ GameWindow::GameWindow(QWidget *parent) :
     ui->setupUi(this);
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
+    widg = new QWidget(this);
+    area = ui->scrollArea;
+    area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    layout = new QVBoxLayout(widg);
+    area->setWidget(widg);
+    area->setWidgetResizable(true);
+
     cerr << "created";
 
 }
@@ -39,11 +47,19 @@ int GameWindow::getPosFromYCoors(int y) {
 
 void GameWindow::drawField(GameLog *gamelog) {
     if (gamelog->player.name == this->name) {
+        isMyWindow = true;
         drawMyWindow(gamelog);
     } else {
+        isMyWindow = false;
         drawEnemy(gamelog);
     }
 }
+
+void GameWindow::addLog(string s) {
+    QLabel *label = new QLabel(QString::fromStdString(s));
+    layout->addWidget(label);
+}
+
 void GameWindow::drawLines(int width, int height, int sumWidth, int sumHeight) {
     QPen myPen(Qt::black);
     myPen.setWidth(5);
@@ -70,7 +86,7 @@ void GameWindow::drawMyWindow(GameLog *gamelog) {
     myPen.setWidth(5);
     scene->addRect(10, 10, summaryWidth, summaryHeight, myPen, brush);
     drawMenu();
-    this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
+    this->resize(summaryWidth + 600, std::max(summaryHeight, 500) + 50);
     drawLines(width, height, summaryWidth, summaryHeight);
 
     drawHorizontalWalls(gamelog, true);
@@ -93,7 +109,7 @@ void GameWindow::drawEnemy(GameLog *gamelog) {
     myPen.setWidth(5);
     scene->addRect(10, 10, thisSummaryWidth, thisSummaryHeight, myPen, brush);
 
-    this->resize(thisSummaryWidth + 100, thisSummaryHeight + 100);
+    this->resize(thisSummaryWidth + 400, thisSummaryHeight + 100);
     QString playerName = QString::fromStdString(gamelog->player.name);
     QGraphicsTextItem *plname = scene->addText(playerName, QFont("Times", 13, QFont::Bold));
     plname->setPos(thisSummaryWidth / 2, thisSummaryHeight + 40);
@@ -171,7 +187,7 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
 
     summaryWidth = serverData.width * boxWidth + (serverData.width - 1) * wallWidth;
     summaryHeight = serverData.height * boxWidth + (serverData.height - 1) * wallWidth;
-    this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
+    this->resize(summaryWidth + 600, std::max(summaryHeight, 500) + 50);
     xCoors = x + 1;
     yCoors = serverData.height - y;
     keys = 0;
@@ -239,31 +255,31 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
             }
             break;
         case Qt::Key_W:
-            move("up");
+            if (isMyWindow) move("up");
             break;
         case Qt::Key_A:
-            move("left");
+            if (isMyWindow) move("left");
             break;
         case Qt::Key_D:
-            move("right");
+            if (isMyWindow) move("right");
             break;
         case Qt::Key_S:
-            move("down");
+            if (isMyWindow) move("down");
             break;
         case Qt::Key_I:
-            shoot("up");
+            if (isMyWindow) shoot("up");
             break;
         case Qt::Key_J:
-            shoot("left");
+            if (isMyWindow) shoot("left");
             break;
         case Qt::Key_K:
-            shoot("down");
+            if (isMyWindow) shoot("down");
             break;
         case Qt::Key_L:
-            shoot("right");
+            if (isMyWindow) shoot("right");
             break;
         case Qt::Key_Q:
-            dig();
+            if (isMyWindow) dig();
             break;
     }
 }
@@ -429,6 +445,7 @@ int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 
     if (isServer) {
         string result = server->move(name, direction);
         //sendtoall(result);
+        doResultOfTurn(result);
         vector<string> parsed = splitter::split(' ', 5, result);
         cerr << "LOOK AT THIS: " << result << endl;
         cerr << parsed[3] << ' ' << parsed[4] << endl;
@@ -478,7 +495,7 @@ void GameWindow::doResultOfTurn(string turnn) {
         }
         summaryWidth = stoi(parsed[1]) * boxWidth + (stoi(parsed[1]) - 1) * wallWidth;
         summaryHeight = stoi(parsed[2]) * boxWidth + (stoi(parsed[2]) - 1) * wallWidth;
-        this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
+        this->resize(summaryWidth + 600, std::max(summaryHeight, 500) + 50);
         xCoors += 1;
         yCoors = stoi(parsed[2]) - yCoors;
         keys = 0;
@@ -536,6 +553,7 @@ void GameWindow::doResultOfTurn(string turnn) {
         tolog += " digs " + turn[2] + " items";
     }
     logs.push_back(tolog);
+    addLog(tolog);
 }
 
 

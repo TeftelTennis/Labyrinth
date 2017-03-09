@@ -6,6 +6,9 @@
 #include <QtCore>
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QLabel>
 
 #include "hostserver.h"
 #include "server.h"
@@ -61,6 +64,7 @@ public:
     int getPosFromXCoors(int x);
     int getPosFromYCoors(int y);
 
+    void addLog(string s);
 
     void drawLines(int width, int height, int sumWidth, int sumHeight);
     void drawField(GameLog *gamelog);
@@ -100,9 +104,15 @@ private slots:
 
 private:
     Ui::GameWindow *ui;
+
+    QWidget *widg;
+    QScrollArea *area;
+    QVBoxLayout *layout;
+
     QGraphicsScene *scene;
     QGraphicsRectItem *menu;
     QGraphicsEllipseItem *playerIcon;
+
     QGraphicsTextItem *controls;
     QGraphicsTextItem *wsad;
     QGraphicsTextItem *sh;

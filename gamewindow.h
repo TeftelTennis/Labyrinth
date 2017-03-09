@@ -56,20 +56,26 @@ public:
     void drawMyWindow(GameLog *gamelog);
     void drawEnemy(GameLog *gamelog);
     void drawPath(vector<Direction> directions, int x, int y);
+    void drawHorizontalWalls(GameLog *gamelog, bool isMine);
+    void drawVerticalWalls(GameLog *gamelog, bool isMine);
+    void drawWall(int curXCoor, int curYCoor, int direction);
+    void drawMenu();
 
     void setParams(bool isServer, string name, int x, int y, ServerData serverData);
-    void keyPressEvent(QKeyEvent *key); //do smth depend on the key pressed
     void initialize(); //Drawing the start field, without any walls
     void update(); //update visual part????
     void doResultOfTurn(string turnn);
     void updateInfo();
     void move(string direction);
     int movePlayer(string direction); //Move player
-    void drawWall(int curXCoor, int curYCoor, int direction);
+
     void showTreasureText();
     void hideTreasureText();
     void shoot(string direction);
     void dig();
+
+protected slots:
+    void keyPressEvent(QKeyEvent *key); //do smth depend on the key pressed
 
 private:
     Ui::GameWindow *ui;

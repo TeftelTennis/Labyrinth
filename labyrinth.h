@@ -17,7 +17,7 @@ using namespace std;
 
 class Labyrinth {
 private:
-    int const static MAXSIZE = 1000;
+    int const static MAXSIZE = 35;
 public:
     int w;
     int h;

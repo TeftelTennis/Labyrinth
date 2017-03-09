@@ -534,7 +534,8 @@ void GameWindow::drawHorizontalWalls(GameLog *gamelog, bool isMine) {
                 if (isMine) {
                     drawWall(j, i, 3);
                 } else {
-                    drawWall(j + width - 1, i + height - 1, 3);
+                    drawWall(j + width - gamelog->jStart - 1,
+                             i + height - gamelog->iStart - 1, 3);
                 }
             }
         }
@@ -548,7 +549,8 @@ void GameWindow::drawVerticalWalls(GameLog *gamelog, bool isMine) {
                 if (isMine) {
                     drawWall(j, i, 0);
                 } else {
-                    drawWall(j + width, i + height, 0);
+                    drawWall(j + width - gamelog->jStart - 1,
+                             i + height - gamelog->iStart - 1, 0);
                 }
             }
         }

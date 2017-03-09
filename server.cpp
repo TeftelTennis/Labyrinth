@@ -59,6 +59,7 @@ void Server::addPlayer(int i, int j, string nameP) {
     //Debug.Log("addPlayer " + nameP + ' ' + tmp.toString());
     field->cell[i][j].push_back(new Player(nameP, startAmmo, startLife));
     turnQueue.push_back(nameP);
+
     //var ip : String = player.externalIP;
     //Debug.Log(ip + ' ' + nameP);
     //if (!players.Contains(ip))

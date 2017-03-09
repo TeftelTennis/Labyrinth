@@ -43,13 +43,14 @@ public:
     vector<GameLog> gamelogs;
     vector<string> logs;
 
+    int logPosition;
+
     Server* server;
     //Client client;
     int getPosFromXCoor();
     int getPosFromYCoor();
     int getPosFromXCoors(int x);
     int getPosFromYCoors(int y);
-
 
     void drawLines(int width, int height, int sumWidth, int sumHeight);
     void drawField(GameLog *gamelog);

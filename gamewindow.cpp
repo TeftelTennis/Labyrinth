@@ -128,6 +128,8 @@ void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData 
     bullets = serverData.startAmmo;
     width = serverData.width;
     height = serverData.height;
+    logPosition = gamelogs.size() - 1;
+
     initialize();
 }
 
@@ -437,7 +439,7 @@ void GameWindow::drawHorizontalWalls(GameLog *gamelog, bool isMine) {
                 if (isMine) {
                     drawWall(j, i, 3);
                 } else {
-                    drawWall(j + width, i + height, 3);
+                    drawWall(j + width - 1, i + height - 1, 3);
                 }
             }
         }

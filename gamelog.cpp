@@ -5,8 +5,8 @@ void GameLog::addObject(LabyrinthObject a) {  //тут вроде LabyrinthObjec
     cell[iCur][jCur].push_back(&a);
 }
 
-GameLog::GameLog(int w, int h, int ammo, int life, bool border, int i, int j) : Labyrinth(w, h) {
-    player = Player("HERO", ammo, life);
+GameLog::GameLog(string name,int w, int h, int ammo, int life, bool border, int i, int j) : Labyrinth(w, h) {
+    player = Player(name, ammo, life);
     //тут было super(w, h)
     iStart = i;
     jStart = j;

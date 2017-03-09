@@ -69,7 +69,7 @@ public:
 
     void createPlayer(string name, int w,int  h, int i, int j) {
         //Debug.Log("createPlayer : " + name);
-        myLog = GameLog(w, h, startAmmo, startLife, true, i, j);
+        myLog = GameLog(name, w, h, startAmmo, startLife, true, i, j);
         playerName = name;
         //NetworkPlayer player = networkView.owner;
         if (!isServer){}

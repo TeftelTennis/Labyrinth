@@ -87,7 +87,13 @@ void GameWindow::drawEnemy(GameLog *gamelog) {
     int thisHeight = height * 2 - 1;
     int thisSummaryWidth = thisWidth * boxWidth + (thisWidth - 1) * wallWidth;
     int thisSummaryHeight = thisHeight * boxWidth + (thisHeight - 1) * wallWidth;
-    this->resize(summaryWidth + 20, summaryHeight + 50);
+
+    QBrush brush = QBrush(0xcfbea5);
+    QPen myPen = QPen(Qt::black);
+    myPen.setWidth(5);
+    scene->addRect(10, 10, thisSummaryWidth, thisSummaryHeight, myPen, brush);
+
+    this->resize(thisSummaryWidth + 100, thisSummaryHeight + 100);
     QString playerName = QString::fromStdString(gamelog->player.name);
     QGraphicsTextItem *plname = scene->addText(playerName, QFont("Times", 13, QFont::Bold));
     plname->setPos(thisSummaryWidth / 2, thisSummaryHeight + 40);
@@ -98,8 +104,8 @@ void GameWindow::drawEnemy(GameLog *gamelog) {
 
     drawPath(gamelog->turn, width - 1, height - 1);
 
-    playerIcon = scene->addEllipse(getPosFromXCoors(gamelog->iCur + width) + 5,
-                                   getPosFromYCoors(gamelog->jCur + height) + 5,
+    playerIcon = scene->addEllipse(getPosFromXCoors(width) + 5,
+                                   getPosFromYCoors(height) + 5,
                                    40, 40, QPen(Qt::black), QBrush(Qt::blue));
 
 }
@@ -184,6 +190,9 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
     bullets = serverData.startAmmo;
     width = serverData.width;
     height = serverData.height;
+    gamelogs.push_back(GameLog(this->name, width, height, bullets, 1, true, x, y));
+    gamelogs.push_back(GameLog("sosna", width, height, bullets, 2, true, 1, 2));
+    logPosition = 0;
     initialize();
 }
 
@@ -221,18 +230,18 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
             close();
             break;
             //Нужен какой-то счетчик-итератор, типа знать где мы находимся
-/*        case Qt::Key_T:
-            if (iter != 0) {
+        case Qt::Key_T:
+            if (logPosition != 0) {
                 scene->clear();
-                drawField(gamelogs[iter--]);
+                drawField(&gamelogs[--logPosition]);
             }
             break;
         case Qt::Key_Y:
-            if (iter != gamelogs.size() - 1) {
+            if (logPosition != gamelogs.size() - 1) {
                 scene->clear();
-                drawField(gamelogs[iter++]);
+                drawField(&gamelogs[++logPosition]);
             }
-            break; */
+            break;
         case Qt::Key_W:
             move("up");
             break;
@@ -424,6 +433,10 @@ int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 
     if (isServer) {
         string result = server->move(name, direction);
         //sendtoall(result);
+        vector<string> parsed = splitter::split(' ', 5, result);
+        cerr << "LOOK AT THIS: " << result << endl;
+        cerr << parsed[3] << ' ' << parsed[4] << endl;
+        if (parsed[3] == "wall") return 1;
     }
     else {
         string send = name + " move " + direction;
@@ -550,25 +563,25 @@ void GameWindow::drawWall(int curXCoor, int curYCoor, int direction) {
     int x2;
     int y2;
     switch (direction) {
-        case 0:
+        case 1:
             x1 = getPosFromXCoors(curXCoor) - 5;
             y1 = getPosFromYCoors(curYCoor) - 5;
             x2 = x1;
             y2 = y1 + 60;
             break;
-        case 1:
+        case 0:
             x1 = getPosFromXCoors(curXCoor) - 5;
             y1 = getPosFromYCoors(curYCoor) - 5;
             x2 = x1 + 60;
             y2 = y1;
             break;
-        case 2:
+        case 3:
             x1 = getPosFromXCoors(curXCoor) + 55;
             y1 = getPosFromYCoors(curYCoor) - 5;
             x2 = x1;
             y2 = y1 + 60;
             break;
-        case 3:
+        case 2:
             x1 = getPosFromXCoors(curXCoor) - 5;
             y1 = getPosFromYCoors(curYCoor) + 55;
             x2 = x1 + 60;

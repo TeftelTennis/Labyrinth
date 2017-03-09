@@ -66,6 +66,7 @@ public:
 
     void addLog(string s);
 
+    void drawLine(int xFrom, int yFrom, string direction);
     void drawLines(int width, int height, int sumWidth, int sumHeight);
     void drawField(GameLog *gamelog);
     void drawMyWindow(GameLog *gamelog);

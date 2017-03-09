@@ -93,9 +93,6 @@ void GameWindow::drawMyWindow(GameLog *gamelog) {
     drawVerticalWalls(gamelog, true);
 
     drawPath(gamelog->turn, gamelog->iStart, gamelog->jStart);
-    playerIcon = scene->addEllipse(getPosFromXCoors(gamelog->iCur) + 5,
-                                   getPosFromYCoors(gamelog->jCur) + 5,
-                                   40, 40, QPen(Qt::black), QBrush(Qt::blue));
 }
 
 void GameWindow::drawEnemy(GameLog *gamelog) {
@@ -120,14 +117,50 @@ void GameWindow::drawEnemy(GameLog *gamelog) {
 
     drawPath(gamelog->turn, width - 1, height - 1);
 
-    playerIcon = scene->addEllipse(getPosFromXCoors(width) + 5,
-                                   getPosFromYCoors(height) + 5,
-                                   40, 40, QPen(Qt::black), QBrush(Qt::blue));
+}
 
+void GameWindow::drawLine(int xFrom, int yFrom, string direction) {
+    int xStart = getPosFromXCoors(xFrom) + 25;
+    int yStart = getPosFromYCoors(yFrom) + 25;
+    int xFin = xStart;
+    int yFin = yStart;
+    if (direction == "up") {
+        yFin -= 60;
+    } else if (direction == "left") {
+        xFin -= 60;
+    } else if (direction == "right") {
+        xFin += 60;
+    } else {
+        yFin += 60;
+    }
+    QLineF line(xStart, yStart, xFin, yFin);
+    scene->addLine(line, QPen(Qt::red));
 }
 
 void GameWindow::drawPath(vector<Direction> directions, int x, int y) {
     //ну типа рисуем линии начиная со стартовой позиции x y
+    int xx = x;
+    int yy = y;
+    for (auto direction : directions) {
+        switch (direction.dir) {
+            case 0:
+                drawLine(xx, yy--, "up");
+                break;
+            case 1:
+                drawLine(xx--, yy, "left");
+                break;
+            case 2:
+                drawLine(xx, yy++, "down");
+                break;
+            case 3:
+                drawLine(xx++, yy, "right");
+                break;
+        }
+    }
+    playerIcon = scene->addEllipse(getPosFromXCoors(xx) + 5,
+                                   getPosFromYCoors(yy) + 5,
+                                   40, 40, QPen(Qt::black), QBrush(Qt::blue));
+
 }
 
 void GameWindow::sendtoserver(string data) {

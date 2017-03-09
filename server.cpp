@@ -1,13 +1,14 @@
 #include "server.h"
 #include "splitter.h"
 #include <iostream>
+#include <QtNetwork>
+
 using namespace std;
 
-Server::Server() {
-}
+
+
 
 Server::Server(ServerData serverData) {
-
     int w = serverData.width;
     int h = serverData.height;
     startAmmo = serverData.startAmmo;
@@ -42,6 +43,8 @@ void Server::killPlayer(string name) {
     }
     turnQueue = tmpQueue;
 }
+
+
 
 void Server::OnPlayerDisconnected () {
     /*var ip : String = player.externalIP;

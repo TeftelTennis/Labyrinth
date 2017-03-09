@@ -9,6 +9,13 @@
 #include "dsu.h"
 #include "labyrinthdata.h"
 #include <memory>
+#include <QMainWindow>
+#include <QtNetwork>
+#include <QTcpSocket>
+#include <QObject>
+#include <QByteArray>
+#include <QDebug>
+#include <QDialog>
 
 #ifndef LABYRINTH_H
 #define LABYRINTH_H

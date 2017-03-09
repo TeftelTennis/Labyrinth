@@ -7,7 +7,7 @@
 
 class DSU {
 private:
-    int const static MAXSIZE = 1000;
+    int const static MAXSIZE = 35;
 public:
     int k;
     std::pair<int, int> parent[MAXSIZE][MAXSIZE];

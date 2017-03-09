@@ -108,17 +108,73 @@ void GameWindow::drawPath(vector<Direction> directions, int x, int y) {
     //ну типа рисуем линии начиная со стартовой позиции x y
 }
 
-void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData serverData) {
+void GameWindow::startJoin(int x, int y, string name) {
+    tcpSocket = new QTcpSocket(this);
 
-      cerr << "paramsstart";
+    in.setDevice(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_0);
     this->name = name;
 
-    this->isServer = isServer;
-    if (isServer) {
-        server = new Server(serverData);
-        server->addPlayer(x, y, name);
-        server->addPlayer(0, 1, "nigga");
+    xCoors = x;
+    yCoors = y;
+
+
+    tcpSocket->connectToHost(QHostAddress::LocalHost, 33333);
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataFromServer()));
+    if (tcpSocket->waitForConnected(1000)) {
+        string qstr = "new " + to_string(x) + " " + to_string(y) + " " + name;
+        QString string = QString::fromStdString(qstr);
+        QByteArray array;
+        array.append(string);
+        qDebug()<<  tcpSocket->write(array);
     }
+}
+
+void GameWindow::readDataFromServer() {
+    QTcpSocket* serverSocket = (QTcpSocket*)sender();
+    QByteArray data = serverSocket->readAll();
+    string sdata = data.toStdString();
+    cerr << sdata<<'\n';
+    if (sdata[0] == 'd') {
+        vector<string> parsed = splitter::split(' ', 5, sdata);
+        for (auto q: parsed) {
+            cerr << q << "%";
+        }
+        summaryWidth = stoi(parsed[1]) * boxWidth + (stoi(parsed[1]) - 1) * wallWidth;
+        summaryHeight = stoi(parsed[2]) * boxWidth + (stoi(parsed[2]) - 1) * wallWidth;
+        this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
+        xCoors += 1;
+        yCoors = stoi(parsed[2]) - yCoors - 1;
+        keys = 0;
+        bullets = stoi(parsed[3]);
+        width = stoi(parsed[1]);
+        height = stoi(parsed[2]);
+        initialize();
+    }
+}
+
+void GameWindow::setServerParams(string name, int x, int y, ServerData serverData) {
+
+    cerr << "paramsstart";
+    this->name = name;
+
+    this->isServer = true;
+    server = new Server(serverData);
+
+    server->addPlayer(x, y, name);
+    server->addPlayer(0, 1, "nigga");
+    tcpServer = new QTcpServer(this); //было this
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newuser()));
+    if (!tcpServer->listen(QHostAddress::LocalHost, 33333) && server_status==0) {
+        qDebug() <<  QObject::tr("Unable to start the server: %1.").arg(tcpServer->errorString());
+    } else {
+        server_status=1;
+        cerr << "started";
+        qDebug() << tcpServer->serverAddress() << " " << tcpServer->serverPort() << " adress and port\n";
+        qDebug() << tcpServer->isListening() << "TCPSocket listen on port";
+        qDebug() << QString::fromUtf8("Сервер запущен!");
+    }
+
     summaryWidth = serverData.width * boxWidth + (serverData.width - 1) * wallWidth;
     summaryHeight = serverData.height * boxWidth + (serverData.height - 1) * wallWidth;
     this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
@@ -128,9 +184,34 @@ void GameWindow::setParams(bool isServer, string name, int x, int y, ServerData 
     bullets = serverData.startAmmo;
     width = serverData.width;
     height = serverData.height;
-    logPosition = gamelogs.size() - 1;
-
     initialize();
+}
+
+
+void GameWindow::newuser()
+{
+    if(server_status==1){
+        qDebug() << QString::fromUtf8("У нас новое соединение!");
+        QTcpSocket* clientSocket=tcpServer->nextPendingConnection();
+        int idusersocs=clientSocket->socketDescriptor();
+        SClients[idusersocs]=clientSocket;
+        connect(SClients[idusersocs],SIGNAL(readyRead()),this, SLOT(slotReadClient()));
+        string qwe = "data " + to_string(server->field->w) + " " +  to_string(server->field->h) + " "
+            + to_string(server->serverData.startAmmo) + " " + to_string(server->serverData.startLife);
+
+        QString serverdata = QString::fromStdString(qwe);
+        QByteArray array;
+        array.append(serverdata);
+
+        qDebug() << clientSocket->write(array);
+
+    }
+}
+
+void GameWindow::slotReadClient()
+{
+    QTcpSocket* clientSocket = (QTcpSocket*)sender();
+    qDebug() << clientSocket->readAll()+"\n\r";
 }
 
 
@@ -181,7 +262,6 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
             break;
     }
 }
-
 void GameWindow::drawMenu() {
     QPen myPen = QPen(Qt::black);
     myPen.setWidth(5);
@@ -398,19 +478,19 @@ void GameWindow::doResultOfTurn(string turnn) {
         } else if (turn[3] == "move") {
             tolog += "moves to " + turn[2];
             gamelogs[curlog].addMove(Direction(turn[2]));
-            int corpseCount = stoi(result[4]);
+            int corpseCount = stoi(turn[4]);
             if (corpseCount != 0) {
-                tolog += " there are " + corpseCount + " corpses: ";
+                tolog += " there are " + turn[4] + " corpses: ";
             }
             for (int it = 0; it < corpseCount; it++) {
-                string name  = result[5 + it];
+                string name  = turn[5 + it];
                 tolog += name + " ";
             }
-            int trapCount  = stoi(result[5 + corpseCount]);
+            int trapCount  = stoi(turn[5 + corpseCount]);
             if (corpseCount != 0) {
-                tolog += " there are " + trapCount + " traps";
+                tolog += " there are " + turn[5 + corpseCount] + " traps";
             }
-            if (result[6 + corpseCount + trapCount] == "1") {
+            if (turn[6 + corpseCount + trapCount] == "1") {
                 tolog += " and founds a SECRET place";
             }
         }
@@ -419,18 +499,20 @@ void GameWindow::doResultOfTurn(string turnn) {
         tolog += "shoots " + turn[2] + " and hits " + turn[4] + " target(s): ";
         bool isSamePos = turn[victimCount + 5] == "1";
         for (int it = 0; it < victimCount; it++) {
-            string name = result[5 + it];
+            string name = turn[5 + it];
             tolog += name + "is injured ";
             if (isSamePos) {
                 tolog += "and you took his items";
             }
         }
     } else if (turn[1] == "dig") {
-        int count = stoi(result[2]);
-        tolog += " digs " + count + " items";
+        int count = stoi(turn[2]);
+        tolog += " digs " + turn[2] + " items";
     }
     logs.push_back(tolog);
 }
+
+
 
 void GameWindow::drawHorizontalWalls(GameLog *gamelog, bool isMine) {
     for (int i = 0; i < height + 1; i++) {
@@ -504,3 +586,7 @@ void GameWindow::showTreasureText() {
 void GameWindow::hideTreasureText() {
     treasureText->hide();
 }
+
+
+void sendtoall(string msg){}
+void sendtoserver(string msg){}

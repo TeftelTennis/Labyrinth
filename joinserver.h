@@ -2,6 +2,7 @@
 #define JOINSERVER_H
 
 #include <QDialog>
+#include "labyrinth.h"
 namespace Ui {
 class JoinServer;
 }

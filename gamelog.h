@@ -22,3 +22,4 @@ public:
 };
 
 #endif // GAMELOG_H
+

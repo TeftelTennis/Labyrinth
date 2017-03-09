@@ -37,6 +37,7 @@ public:
     int playerYCoor;
     int keys;
     int bullets;
+    int life;
     bool isServer;
     bool isMyWindow;
     string name;
@@ -45,12 +46,21 @@ public:
 
     int logPosition;
 
+    int server_status;
+    QMap<int,QTcpSocket *> SClients;
+    QTcpServer *tcpServer;
+
+    QTcpSocket* tcpSocket;
+    QDataStream in;
+
+
     Server* server;
     //Client client;
     int getPosFromXCoor();
     int getPosFromYCoor();
     int getPosFromXCoors(int x);
     int getPosFromYCoors(int y);
+
 
     void drawLines(int width, int height, int sumWidth, int sumHeight);
     void drawField(GameLog *gamelog);
@@ -62,7 +72,7 @@ public:
     void drawWall(int curXCoor, int curYCoor, int direction);
     void drawMenu();
 
-    void setParams(bool isServer, string name, int x, int y, ServerData serverData);
+    void setServerParams(string name, int x, int y, ServerData serverData);
     void initialize(); //Drawing the start field, without any walls
     void update(); //update visual part????
     void doResultOfTurn(string turnn);
@@ -74,9 +84,19 @@ public:
     void hideTreasureText();
     void shoot(string direction);
     void dig();
+    void sendtoall(string msg);
+    void sendtoserver(string msg);
+    void startJoin(int x, int y, string name);
 
 protected slots:
     void keyPressEvent(QKeyEvent *key); //do smth depend on the key pressed
+
+private slots:
+    void newuser();
+
+    void slotReadClient();
+
+    void readDataFromServer();
 
 private:
     Ui::GameWindow *ui;

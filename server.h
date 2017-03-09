@@ -9,7 +9,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-class Server {
+class Server : public QDialog{
 public:
     map<string, string> players;
     Labyrinth* field;
@@ -29,7 +29,6 @@ public:
     bool consoleButtonPressed = false;
 
     Server(ServerData serverData);
-    Server();
 
     //Вход выход игроков
     void killPlayer(string name);
@@ -54,6 +53,7 @@ public:
     void OnGUI();
 
     void console(int windowID);
+
 };
 
 

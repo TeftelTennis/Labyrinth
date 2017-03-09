@@ -31,7 +31,7 @@ void HostServer::on_pushButton_clicked()
                                        getWallProb(), getStaticTreasureProb(), getLoveToiletsProb(),
                                                                 canPutTreasureTogether(), useRandomTreasure());
     GameWindow *game = new GameWindow(this);
-    game->setParams(true, "lmao", getXCoor(), getYCoor(), serverData);
+    game->setServerParams("lmao", getXCoor(), getYCoor(), serverData);
     cerr << "paramsend";
     hide();
     game->setWindowTitle("Labyrinth");

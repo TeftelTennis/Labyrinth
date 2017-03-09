@@ -42,8 +42,7 @@ SOURCES += main.cpp\
     network.cpp \
     splitter.cpp \
     labyrinthobjectfactory.cpp\
-    trap.cpp \
-    client.cpp
+    trap.cpp
 
 HEADERS  += labyrinth.h \
     item.h \
@@ -63,8 +62,7 @@ HEADERS  += labyrinth.h \
     network.h \
     splitter.h \
     labyrinthobjectfactory.h \
-    trap.h \
-    client.h
+    trap.h
 
 FORMS    +=    joinserver.ui \
     menuwindow.ui \

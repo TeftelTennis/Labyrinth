@@ -142,7 +142,7 @@ string Server::move(string nameP, string direct) {
     }
     cerr << result << "\n\n";
     turnPlayer = nameNext;
-    return nameP + "$move " + direct + "$" +  result + "$" + nameNext;
+    return nameP + " move " + direct + " " +  result + " " + nameNext;
 }
 
 string Server::shoot(string nameP, string direct, int item) {
@@ -213,17 +213,17 @@ string Server::shoot(string nameP, string direct, int item) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    return nameP + "$" + "shoot " + direct + " " + to_string(item) + "$" + result + "$" + nameNext;
+    return nameP + " " + "shoot " + direct + " " + to_string(item) + " " + result + " " + nameNext;
 }
 
 string Server::dig(string nameP) {
-    cerr << "CELLS\n";
-    for (int i = 0; i < field->w; i++) {
-        for (int j = 0; j < field->h; j++) {
-            cerr << field->cell[i][j].size() << " ";
-        }
-        cerr << "\n";
-    }
+    //cerr << "CELLS\n";
+    //for (int i = 0; i < field->w; i++) {
+    //    for (int j = 0; j < field->h; j++) {
+    //        cerr << field->cell[i][j].size() << " ";
+    //    }
+    //    cerr << "\n";
+    //}
     string result = "";
     string nameNext;
     tuple<int, int, int> playerPos = field->findPlayer(nameP);
@@ -267,27 +267,30 @@ string Server::dig(string nameP) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    return nameP + "$" + "dig" + result + "$" + nameNext;
+    return nameP + " " + "dig" + result + " " + nameNext;
 }
 
-void Server::doTurn(string turn, string nameP) {
+string Server::doTurn(string turn) {
+    vector<string> arr = splitter::split(' ', 4, turn);
+
+    string nameP = arr[0];
+
     if (nameP != turnPlayer) {
         commandLog.push_back("Server>'" + nameP + "' try to do turn. turnPlayer = " + turnPlayer);
-        return;
+        return "bad";
     }
     commandLog.push_back(nameP + ":>" + turn);
     //string arr[3] = turn.Split([" "], 3, System.StringSplitOptions.None);
     //SPLIT
-    vector<string> arr = splitter::split(' ', 3, turn);
 
-    string type = arr[0];
+    string type = arr[1];
 
     if (type == "move") {
-        move(nameP, arr[1]);
+        return move(nameP, arr[2]);
     } else if (type == "shoot") {
-        shoot(nameP, arr[1], stoi(arr[2]));
+        return shoot(nameP, arr[2], stoi(arr[3]));
     } else if (type == "dig") {
-        dig(nameP);
+        return dig(nameP);
     }
 }
 
@@ -298,12 +301,17 @@ void Server::startGame() {
 }
 
 
-void Server::doCommand(string command) {
+/*void Server::doCommand(string command) {
     vector<string> com = splitter::split(' ', 100, command);
 
     tuple<int, int, int> pos;
     Player* player ;
     pair<int, int> tmpos;
+    string nameP = com[0];
+    if (com[1] == "move") {
+
+    }
+
     if (com[0] == "kill") {
         killPlayer(com[1]);
     } else if (com[0] == "give") {
@@ -350,7 +358,7 @@ void Server::doCommand(string command) {
         }
         doTurn(com[1], turnPlayer);
     }
-}
+}*/
 
 
 /*function OnGUI() {

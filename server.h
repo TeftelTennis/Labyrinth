@@ -45,11 +45,11 @@ public:
 
     string dig(string nameP);
 
-    void doTurn(string turn, string nameP);
+    string doTurn(string turn);
 
     void startGame();
 
-    void doCommand(string command);
+    //void doCommand(string command);
 
     void OnGUI();
 

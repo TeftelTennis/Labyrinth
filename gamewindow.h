@@ -39,6 +39,8 @@ public:
     bool isServer;
     bool isMyWindow;
     string name;
+    vector<GameLog> gamelogs;
+    vector<string> logs;
 
     Server* server;
     //Client client;
@@ -46,6 +48,7 @@ public:
     int getPosFromYCoor();
     int getPosFromXCoors(int x);
     int getPosFromYCoors(int y);
+
 
     void drawLines(int width, int height, int sumWidth, int sumHeight);
     void drawField(GameLog *gamelog);
@@ -60,7 +63,6 @@ public:
     void updateInfo();
     void move(string direction);
     int movePlayer(string direction); //Move player
-    int check(); //Check if smth at this position, like treasure or landmine
     void drawWall(int curXCoor, int curYCoor, int direction);
     void showTreasureText();
     void hideTreasureText();

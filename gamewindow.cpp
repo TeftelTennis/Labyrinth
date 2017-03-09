@@ -114,6 +114,15 @@ void GameWindow::drawPath(vector<Direction> directions, int x, int y) {
     //ну типа рисуем линии начиная со стартовой позиции x y
 }
 
+void GameWindow::sendtoserver(string data) {
+    if (tcpSocket->waitForConnected(1000)) {
+       QString string = QString::fromStdString(data);
+        QByteArray array;
+        array.append(string);
+        qDebug()<<  tcpSocket->write(array);
+    }
+}
+
 void GameWindow::startJoin(int x, int y, string name) {
     tcpSocket = new QTcpSocket(this);
 
@@ -123,17 +132,10 @@ void GameWindow::startJoin(int x, int y, string name) {
 
     xCoors = x;
     yCoors = y;
-
-
     tcpSocket->connectToHost(QHostAddress::LocalHost, 33333);
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataFromServer()));
-    if (tcpSocket->waitForConnected(1000)) {
-        string qstr = "new " + to_string(x) + " " + to_string(y) + " " + name;
-        QString string = QString::fromStdString(qstr);
-        QByteArray array;
-        array.append(string);
-        qDebug()<<  tcpSocket->write(array);
-    }
+    string qstr = "new " + to_string(x) + " " + to_string(y) + " " + name;
+    sendtoserver(qstr);
 }
 
 void GameWindow::readDataFromServer() {
@@ -141,22 +143,8 @@ void GameWindow::readDataFromServer() {
     QByteArray data = serverSocket->readAll();
     string sdata = data.toStdString();
     cerr << sdata<<'\n';
-    if (sdata[0] == 'd') {
-        vector<string> parsed = splitter::split(' ', 5, sdata);
-        for (auto q: parsed) {
-            cerr << q << "%";
-        }
-        summaryWidth = stoi(parsed[1]) * boxWidth + (stoi(parsed[1]) - 1) * wallWidth;
-        summaryHeight = stoi(parsed[2]) * boxWidth + (stoi(parsed[2]) - 1) * wallWidth;
-        this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
-        xCoors += 1;
-        yCoors = stoi(parsed[2]) - yCoors - 1;
-        keys = 0;
-        bullets = stoi(parsed[3]);
-        width = stoi(parsed[1]);
-        height = stoi(parsed[2]);
-        initialize();
-    }
+    doResultOfTurn(sdata);
+
 }
 
 void GameWindow::setServerParams(string name, int x, int y, ServerData serverData) {
@@ -185,7 +173,7 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
     summaryHeight = serverData.height * boxWidth + (serverData.height - 1) * wallWidth;
     this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
     xCoors = x + 1;
-    yCoors = serverData.height - 1;
+    yCoors = serverData.height - y;
     keys = 0;
     bullets = serverData.startAmmo;
     width = serverData.width;
@@ -205,14 +193,14 @@ void GameWindow::newuser()
         int idusersocs=clientSocket->socketDescriptor();
         SClients[idusersocs]=clientSocket;
         connect(SClients[idusersocs],SIGNAL(readyRead()),this, SLOT(slotReadClient()));
-        string qwe = "data " + to_string(server->field->w) + " " +  to_string(server->field->h) + " "
-            + to_string(server->serverData.startAmmo) + " " + to_string(server->serverData.startLife);
+        //string qwe = "data " + to_string(server->field->w) + " " +  to_string(server->field->h) + " "
+        //    + to_string(server->serverData.startAmmo) + " " + to_string(server->serverData.startLife);
 
-        QString serverdata = QString::fromStdString(qwe);
-        QByteArray array;
-        array.append(serverdata);
+        //QString serverdata = QString::fromStdString(qwe);
+        //QByteArray array;
+        //array.append(serverdata);
 
-        qDebug() << clientSocket->write(array);
+        //qDebug() << clientSocket->write(array);
 
     }
 }
@@ -220,7 +208,15 @@ void GameWindow::newuser()
 void GameWindow::slotReadClient()
 {
     QTcpSocket* clientSocket = (QTcpSocket*)sender();
-    qDebug() << clientSocket->readAll()+"\n\r";
+    QByteArray data = clientSocket->readAll();
+    qDebug() << data;
+    string sdata = data.toStdString();
+    string result = server->doTurn(sdata);
+    QString serverdata = QString::fromStdString(result);
+    QByteArray array;
+    array.append(serverdata);
+
+    qDebug() << clientSocket->write(array);
 }
 
 
@@ -440,7 +436,7 @@ int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 
     }
     else {
         string send = name + " move " + direction;
-        //sendtoserver(send);
+        sendtoserver(send);
     }
     return 0;
 }
@@ -454,7 +450,7 @@ void GameWindow::shoot(string direction) {
     }
     else {
         string send = name + " shoot " + direction + " 3";
-        //sendtoserver(send);
+        sendtoserver(send);
     }
     //if killed someone then showKillText()
 }
@@ -466,7 +462,7 @@ void GameWindow::dig() {
     }
     else {
         string send = name + " dig";
-        //sendtoserver(send);
+        sendtoserver(send);
     }
     hideTreasureText();
     //+1 to players stash
@@ -475,6 +471,23 @@ void GameWindow::dig() {
 
 
 void GameWindow::doResultOfTurn(string turnn) {
+    if (turnn[0] == 'd') {
+        vector<string> parsed = splitter::split(' ', 5, turnn);
+        for (auto q: parsed) {
+            cerr << q << "%";
+        }
+        summaryWidth = stoi(parsed[1]) * boxWidth + (stoi(parsed[1]) - 1) * wallWidth;
+        summaryHeight = stoi(parsed[2]) * boxWidth + (stoi(parsed[2]) - 1) * wallWidth;
+        this->resize(summaryWidth + 300, std::max(summaryHeight, 500) + 50);
+        xCoors += 1;
+        yCoors = stoi(parsed[2]) - yCoors;
+        keys = 0;
+        bullets = stoi(parsed[3]);
+        width = stoi(parsed[1]);
+        height = stoi(parsed[2]);
+        initialize();
+        return;
+    }
     vector<string> turn = splitter::split(' ', 100, turnn);
     string nameP = turn[0];
     int curlog;

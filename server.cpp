@@ -279,9 +279,19 @@ string Server::doTurn(string turn) {
 
     string nameP = arr[0];
 
+    if(nameP == "new") {
+        int x = stoi(arr[1]);
+        int y = stoi(arr[2]);
+        string name = arr[3];
+        addPlayer(x, y, name);
+        string qwe = "data " + to_string(field->w) + " " +  to_string(field->h) + " "
+                + to_string(serverData.startAmmo) + " " + to_string(serverData.startLife);
+        return qwe;
+    }
+
     if (nameP != turnPlayer) {
         commandLog.push_back("Server>'" + nameP + "' try to do turn. turnPlayer = " + turnPlayer);
-        return "bad";
+    //    return "bad";
     }
     commandLog.push_back(nameP + ":>" + turn);
     //string arr[3] = turn.Split([" "], 3, System.StringSplitOptions.None);

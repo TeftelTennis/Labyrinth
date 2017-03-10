@@ -2,6 +2,7 @@
 #define HOSTSERVER_H
 
 #include <QDialog>
+#include <string>
 #include "gamewindow.h"
 
 namespace Ui {
@@ -25,6 +26,7 @@ public:
     int getKeys();
     int getBullets();
     int getMines();
+    std::string getName();
 
     float getWallProb();
     float getStaticTreasureProb();

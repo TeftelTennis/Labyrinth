@@ -43,6 +43,8 @@ public:
     int life;
     bool isServer;
     bool isMyWindow;
+    bool isInitialised;
+    bool isTreasure;
     string name;
     string nameNext;
     vector<GameLog> gamelogs;

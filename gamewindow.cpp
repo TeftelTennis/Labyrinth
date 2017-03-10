@@ -115,7 +115,7 @@ void GameWindow::drawEnemy(GameLog *gamelog) {
     drawHorizontalWalls(gamelog);
     drawVerticalWalls(gamelog);
 
-    drawPath(gamelog->turn, width - 1, height - 1);
+    drawPath(gamelog->turn, width, height);
 
 }
 
@@ -180,6 +180,9 @@ void GameWindow::startJoin(int x, int y, string name) {
     this->name = name;
     isServer = false;
     isMyWindow = true;
+    isInitialised = false;
+    isTreasure = false;
+    logPosition = 0;
 
     xCoors = x;
     yCoors = y;
@@ -206,6 +209,8 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
 
     this->isServer = true;
     this->isMyWindow = true;
+    this->isInitialised = true;
+    this->isTreasure = false;
     server = new Server(serverData);
 
     server->addPlayer(x, y, name);
@@ -232,7 +237,7 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
     height = serverData.height;
     gamelogs.push_back(GameLog(this->name, width, height, bullets, 1, true, x, y));
     logPosition = 0;
-    initialize();
+    update();
 }
 
 
@@ -264,6 +269,7 @@ void GameWindow::slotReadClient()
     string sdata = data.toStdString();
     string result = server->doTurn(sdata);
     sendtoall(result);
+    doResultOfTurn(result);
 }
 
 void GameWindow::sendtoall(string msg) {
@@ -351,22 +357,8 @@ void GameWindow::drawMenu() {
     keyText->setPos(110 + summaryWidth, 170);
     bulletText->setPos(110 + summaryWidth, 220);
     treasureText->setPos(90 + summaryWidth, 400);
-    treasureText->hide();
     keyNum->setPos(197 + summaryWidth, 170);
     bulletNum->setPos(197 + summaryWidth, 220);
-}
-
-void GameWindow::initialize() {
-    //creates a new field for current player
-    //menu AlignRight with keys description
-    QBrush blueBrush = QBrush(Qt::blue);
-    QBrush brush = QBrush(0xcfbea5);
-
-    QPen myPen = QPen(Qt::black);
-    myPen.setWidth(5);
-
-    scene->addRect(10, 10, summaryWidth, summaryHeight, myPen, brush);
-    drawMenu();
 
     for (int i = 0; i < 3; i++) {
         QLineF line(185 + summaryWidth, 160 + i * 50, 235 + summaryWidth, 160 + i * 50);
@@ -377,26 +369,15 @@ void GameWindow::initialize() {
         QLineF line(185 + summaryWidth + i * 50, 160, 185 + summaryWidth + i * 50, 260);
         scene->addLine(line, QPen(Qt::black));
     }
-
-    for (int i = 1; i < width; i++) {
-        int x = 10 + i * (boxWidth + wallWidth);
-        QLineF line(x - wallWidth, 10, x - wallWidth, 10 + summaryHeight);
-        QLineF line2(x, 10, x, 10 + summaryHeight);
-        scene->addLine(line, myPen);
-        scene->addLine(line2, myPen);
+    if (logPosition == 0 && !isTreasure) {
+        hideTreasureText();
     }
-
-    for (int i = 1; i < height; i++) {
-        int y = 10 + i * (boxWidth + wallWidth);
-        QLineF line(10, y - wallWidth, 10 + summaryWidth, y - wallWidth);
-        QLineF line2(10, y, 10 + summaryWidth, y);
-        scene->addLine(line, myPen);
-        scene->addLine(line2, myPen);
+    if (logPosition != 0) {
+        hideTreasureText();
     }
-    myPen.setWidth(3);
-    playerIcon = scene->addEllipse(getPosFromXCoor() + 5, getPosFromYCoor() + 5, 40, 40, myPen, blueBrush);
-
 }
+
+
 
 void GameWindow::update() {
 //    playerXCoor = getPosFromXCoor();
@@ -406,7 +387,7 @@ void GameWindow::update() {
 //    QBrush blueBrush = QBrush(Qt::blue);
 //    scene->removeItem((QGraphicsItem*) playerIcon);
 //    playerIcon = scene->addEllipse(playerXCoor + 5, playerYCoor + 5, 40, 40, myPen, blueBrush);
-    drawField(&gamelogs[0]);
+    drawField(&gamelogs[logPosition]);
 }
 
 void GameWindow::updateInfo() {
@@ -422,90 +403,21 @@ void GameWindow::updateInfo() {
 }
 
 void GameWindow::move(string direction) {
-    int i = movePlayer(direction);
-    int dir;
-    if (direction == "left") {
-        dir = 1;
-    } else if (direction == "up") {
-        dir = 0;
-    } else if (direction == "right") {
-        dir = 3;
-    } else {
-        dir = 2;
-    }
-    switch (i) {
-        case -1:
-            break;
-        case 0:
-            switch (dir) {
-            case 0:
-                yCoors--;
-                break;
-            case 1:
-                xCoors--;
-                break;
-            case 2:
-                yCoors++;
-                break;
-            case 3:
-                xCoors++;
-                break;
-            }
-            update();
-            break;
-        case 1:
-            drawWall(xCoors, yCoors, dir);
-            break;
-        case 2:
-            switch (dir) {
-            case 0:
-                yCoors--;
-                break;
-            case 1:
-                xCoors--;
-                break;
-            case 2:
-                yCoors++;
-                break;
-            case 3:
-                xCoors++;
-                break;
-            }
-
-            update();
-            showTreasureText();
-            break;
-        case 3:
-            //player life's -1 and checkIfDead()
-            break;
-    }
-}
-
-int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 - down, 3 - right
-    //return 0 if player can get to that direction
-    //return 1 if there is a wall
-    //return 2 if we can move and there is a treasure
-    //return 3 if we can move and there is a mine
     if (isServer) {
+        //cerr << "shoot started\n";
         string result = server->move(name, direction);
-        for (auto qwer : server->turnQueue) {
-            cerr << qwer << " ";
-        }
-        cerr << "end of qu\n";
         sendtoall(result);
         doResultOfTurn(result);
-        vector<string> parsed = splitter::split(' ', 5, result);
-        cerr << "LOOK AT THIS: " << result << endl;
-        cerr << parsed[3] << ' ' << parsed[4] << endl;
-        if (parsed[3] == "wall") return 1;
+
     }
     else {
-        string send = name + " move " + direction;
+        string send = name + " shoot " + direction + " 3";
         sendtoserver(send);
-        return -1;
     }
-    return 0;
+    update();
+    return;
 }
+
 
 void GameWindow::shoot(string direction) {
     cerr << "shoot";
@@ -541,8 +453,14 @@ void GameWindow::dig() {
 
 
 void GameWindow::doResultOfTurn(string turnn) {
+    if(logPosition == 0) {
+        isTreasure = false;
+    }
     //cerr << "doing result of " << turnn;
-    if (turnn[0] == 'd') {
+    if ((turnn[0] == 'd')) {
+        if (isInitialised) {
+            return;
+        }
         vector<string> parsed = splitter::split(' ', 6, turnn);
         for (auto q: parsed) {
             cerr << q << "%";
@@ -550,14 +468,16 @@ void GameWindow::doResultOfTurn(string turnn) {
         summaryWidth = stoi(parsed[1]) * boxWidth + (stoi(parsed[1]) - 1) * wallWidth;
         summaryHeight = stoi(parsed[2]) * boxWidth + (stoi(parsed[2]) - 1) * wallWidth;
         this->resize(summaryWidth + 600, std::max(summaryHeight, 500) + 50);
-        xCoors += 1;
-        yCoors = stoi(parsed[2]) - yCoors;
         keys = 0;
         bullets = stoi(parsed[3]);
         width = stoi(parsed[1]);
         height = stoi(parsed[2]);
         nameNext = parsed[5];
-        initialize();
+        gamelogs.push_back(GameLog(name, width, height, bullets, 1, true, xCoors, yCoors));
+        xCoors += 1;
+        yCoors = stoi(parsed[2]) - yCoors;
+        isInitialised = true;
+        update();
         return;
     }
     vector<string> turn = splitter::split(' ', 100, turnn);
@@ -570,12 +490,7 @@ void GameWindow::doResultOfTurn(string turnn) {
         }
     }
     if (curlog == -1) {
-        if (nameP != name) {
-            gamelogs.push_back(GameLog(nameP, 2 * width - 1, 2 * height - 1, bullets, life, false, width - 1, height - 1));
-        }
-        else {
-            gamelogs.push_back(GameLog(nameP, width, height, bullets, life, true, xCoors, yCoors));
-        }
+        gamelogs.push_back(GameLog(nameP, 2 * width - 1, 2 * height - 1, bullets, life, false, width - 1, height - 1));
         curlog = gamelogs.size() - 1;
     }
     string tolog = nameP;
@@ -600,6 +515,9 @@ void GameWindow::doResultOfTurn(string turnn) {
             }
             if (turn[6 + corpseCount + trapCount] == "1") {
                 tolog += " and founds a SECRET place";
+                if (nameP == name) {
+                    isTreasure = true;
+                }
             }
         }
     } else if (turn[1] == "shoot") {
@@ -619,25 +537,26 @@ void GameWindow::doResultOfTurn(string turnn) {
     }
     logs.push_back(tolog);
     addLog(tolog);
+    update();
 }
 
 
 
 void GameWindow::drawHorizontalWalls(GameLog *gamelog) {
-    for (int i = 0; i < height + 1; i++) {
-        for (int j = 0; j < width; j++) {
+    for (int i = 0; i < gamelog->h + 1; i++) {
+        for (int j = 0; j < gamelog->w; j++) {
             if (gamelog->horizontWalls[i][j] == "wall") {
-                drawWall(j + 1, height - i, 2);
+                drawWall(j + 1, gamelog->h - i, 2);
             }
         }
     }
 }
 
 void GameWindow::drawVerticalWalls(GameLog *gamelog) {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width + 1; j++) {
+    for (int i = 0; i < gamelog->h; i++) {
+        for (int j = 0; j < gamelog->w + 1; j++) {
             if (gamelog->verticalWalls[i][j] == "wall") {
-                drawWall(j + 1, height - i, 1);
+                drawWall(j + 1, gamelog->h - i, 1);
             }
         }
     }

@@ -111,7 +111,7 @@
              <number>30</number>
             </property>
             <property name="value">
-             <number>6</number>
+             <number>5</number>
             </property>
            </widget>
           </item>
@@ -135,7 +135,7 @@
              <number>30</number>
             </property>
             <property name="value">
-             <number>6</number>
+             <number>5</number>
             </property>
            </widget>
           </item>
@@ -159,6 +159,9 @@
             <property name="maximum">
              <number>25</number>
             </property>
+            <property name="value">
+             <number>3</number>
+            </property>
            </widget>
           </item>
          </layout>
@@ -177,6 +180,9 @@
             <property name="maximum">
              <number>20</number>
             </property>
+            <property name="value">
+             <number>1</number>
+            </property>
            </widget>
           </item>
          </layout>
@@ -187,7 +193,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -276,6 +282,12 @@
          <layout class="QHBoxLayout" name="horizontalLayout_11">
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_7">
+            <property name="leftMargin">
+             <number>30</number>
+            </property>
+            <property name="rightMargin">
+             <number>30</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
@@ -303,20 +315,6 @@
                <widget class="QSpinBox" name="bulletsSpinbox"/>
               </item>
              </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>Mines:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="minesSpinbox"/>
             </item>
            </layout>
           </item>
@@ -392,7 +390,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -412,7 +410,7 @@
     <item>
      <widget class="QLineEdit" name="nameLine">
       <property name="text">
-       <string>Player</string>
+       <string>Admin</string>
       </property>
      </widget>
     </item>
@@ -420,13 +418,10 @@
   </widget>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
   <zorder>menuButton</zorder>
   <zorder>pushButton</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
-  <zorder>label_14</zorder>
-  <zorder>nameLine</zorder>
  </widget>
  <resources/>
  <connections>

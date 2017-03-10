@@ -27,11 +27,11 @@ void HostServer::on_pushButton_clicked()
 {
     //TODO: Host server
     ServerData serverData = ServerData(getWidth(), getHeight(), getStartAmmo(),
-                                       getStartLifes(), getKeys(), getBullets(), getMines(),
+                                       getStartLifes(), getKeys(), getBullets(), 0,
                                        getWallProb(), getStaticTreasureProb(), getLoveToiletsProb(),
                                                                 canPutTreasureTogether(), useRandomTreasure());
     GameWindow *game = new GameWindow(this);
-    game->setServerParams("lmao", getXCoor(), getYCoor(), serverData);
+    game->setServerParams(getName(), getXCoor(), getYCoor(), serverData);
     cerr << "paramsend";
     hide();
     game->setWindowTitle("Labyrinth");
@@ -72,9 +72,9 @@ int HostServer::getBullets() {
     return ui->bulletsSpinbox->value();
 }
 
-int HostServer::getMines() {
-    return ui->minesSpinbox->value();
-}
+//int HostServer::getMines() {
+//    return ui->minesSpinbox->value();
+//}
 
 float HostServer::getWallProb() {
     return static_cast<double>(ui->wallProb->value()) / 100;
@@ -94,4 +94,8 @@ bool HostServer::canPutTreasureTogether() {
 
 bool HostServer::useRandomTreasure() {
     return ui->randomTreasure->isChecked();
+}
+
+string HostServer::getName() {
+    return ui->nameLine->text().toStdString();
 }

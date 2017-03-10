@@ -15,6 +15,10 @@ public:
     explicit JoinServer(QWidget *parent = 0);
     ~JoinServer();
 
+    int getXCoor();
+    int getYCoor();
+    string getName();
+
 private slots:
     void on_returnButton_clicked();
 

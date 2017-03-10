@@ -73,8 +73,8 @@ public:
     void drawMyWindow(GameLog *gamelog);
     void drawEnemy(GameLog *gamelog);
     void drawPath(vector<Direction> directions, int x, int y);
-    void drawHorizontalWalls(GameLog *gamelog, bool isMine);
-    void drawVerticalWalls(GameLog *gamelog, bool isMine);
+    void drawHorizontalWalls(GameLog *gamelog);
+    void drawVerticalWalls(GameLog *gamelog);
     void drawWall(int curXCoor, int curYCoor, int direction);
     void drawMenu();
 

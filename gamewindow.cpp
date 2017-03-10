@@ -89,10 +89,10 @@ void GameWindow::drawMyWindow(GameLog *gamelog) {
     this->resize(summaryWidth + 600, std::max(summaryHeight, 500) + 50);
     drawLines(width, height, summaryWidth, summaryHeight);
 
-    drawHorizontalWalls(gamelog, true);
-    drawVerticalWalls(gamelog, true);
+    drawHorizontalWalls(gamelog);
+    drawVerticalWalls(gamelog);
 
-    drawPath(gamelog->turn, gamelog->iStart, gamelog->jStart);
+    drawPath(gamelog->turn, gamelog->jStart + 1, height - gamelog->iStart);
 }
 
 void GameWindow::drawEnemy(GameLog *gamelog) {
@@ -112,8 +112,8 @@ void GameWindow::drawEnemy(GameLog *gamelog) {
     plname->setPos(thisSummaryWidth / 2, thisSummaryHeight + 40);
     drawLines(thisWidth, thisHeight, thisSummaryWidth, thisSummaryHeight);
 
-    drawHorizontalWalls(gamelog, false);
-    drawVerticalWalls(gamelog, false);
+    drawHorizontalWalls(gamelog);
+    drawVerticalWalls(gamelog);
 
     drawPath(gamelog->turn, width - 1, height - 1);
 
@@ -231,7 +231,6 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
     width = serverData.width;
     height = serverData.height;
     gamelogs.push_back(GameLog(this->name, width, height, bullets, 1, true, x, y));
-    gamelogs.push_back(GameLog("sosna", width, height, bullets, 2, true, 1, 2));
     logPosition = 0;
     initialize();
 }
@@ -400,13 +399,14 @@ void GameWindow::initialize() {
 }
 
 void GameWindow::update() {
-    playerXCoor = getPosFromXCoor();
-    playerYCoor = getPosFromYCoor();
-    QPen myPen = QPen(Qt::black);
-    myPen.setWidth(3);
-    QBrush blueBrush = QBrush(Qt::blue);
-    scene->removeItem((QGraphicsItem*) playerIcon);
-    playerIcon = scene->addEllipse(playerXCoor + 5, playerYCoor + 5, 40, 40, myPen, blueBrush);
+//    playerXCoor = getPosFromXCoor();
+//    playerYCoor = getPosFromYCoor();
+//    QPen myPen = QPen(Qt::black);
+//    myPen.setWidth(3);
+//    QBrush blueBrush = QBrush(Qt::blue);
+//    scene->removeItem((QGraphicsItem*) playerIcon);
+//    playerIcon = scene->addEllipse(playerXCoor + 5, playerYCoor + 5, 40, 40, myPen, blueBrush);
+    drawField(&gamelogs[0]);
 }
 
 void GameWindow::updateInfo() {
@@ -623,31 +623,21 @@ void GameWindow::doResultOfTurn(string turnn) {
 
 
 
-void GameWindow::drawHorizontalWalls(GameLog *gamelog, bool isMine) {
+void GameWindow::drawHorizontalWalls(GameLog *gamelog) {
     for (int i = 0; i < height + 1; i++) {
         for (int j = 0; j < width; j++) {
             if (gamelog->horizontWalls[i][j] == "wall") {
-                if (isMine) {
-                    drawWall(j, i, 3);
-                } else {
-                    drawWall(j + width - gamelog->jStart - 1,
-                             i + height - gamelog->iStart - 1, 3);
-                }
+                drawWall(j + 1, height - i, 2);
             }
         }
     }
 }
 
-void GameWindow::drawVerticalWalls(GameLog *gamelog, bool isMine) {
+void GameWindow::drawVerticalWalls(GameLog *gamelog) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width + 1; j++) {
             if (gamelog->verticalWalls[i][j] == "wall") {
-                if (isMine) {
-                    drawWall(j, i, 0);
-                } else {
-                    drawWall(j + width - gamelog->jStart - 1,
-                             i + height - gamelog->iStart - 1, 0);
-                }
+                drawWall(j + 1, height - i, 1);
             }
         }
     }

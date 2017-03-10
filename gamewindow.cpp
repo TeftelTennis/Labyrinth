@@ -571,7 +571,7 @@ void GameWindow::doResultOfTurn(string turnn) {
     }
     if (curlog == -1) {
         if (nameP != name) {
-            gamelogs.push_back(GameLog(nameP, width, height, bullets, life, false, 0, 0));
+            gamelogs.push_back(GameLog(nameP, 2 * width - 1, 2 * height - 1, bullets, life, false, width - 1, height - 1));
         }
         else {
             gamelogs.push_back(GameLog(nameP, width, height, bullets, life, true, xCoors, yCoors));

@@ -162,7 +162,6 @@ void GameWindow::drawPath(vector<Direction> directions, int x, int y) {
                                    40, 40, QPen(Qt::black), QBrush(Qt::blue));
 
 }
-
 void GameWindow::sendtoserver(string data) {
     if (tcpSocket->waitForConnected(1000)) {
        QString string = QString::fromStdString(data);
@@ -172,12 +171,15 @@ void GameWindow::sendtoserver(string data) {
     }
 }
 
+
 void GameWindow::startJoin(int x, int y, string name) {
     tcpSocket = new QTcpSocket(this);
 
     in.setDevice(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
     this->name = name;
+    isServer = false;
+    isMyWindow = true;
 
     xCoors = x;
     yCoors = y;
@@ -191,7 +193,7 @@ void GameWindow::readDataFromServer() {
     QTcpSocket* serverSocket = (QTcpSocket*)sender();
     QByteArray data = serverSocket->readAll();
     string sdata = data.toStdString();
-    cerr << sdata<<'\n';
+    cerr << "frome server : " << sdata<<'\n';
     doResultOfTurn(sdata);
 
 }
@@ -200,12 +202,13 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
 
     cerr << "paramsstart";
     this->name = name;
+    this->nameNext = name;
 
     this->isServer = true;
+    this->isMyWindow = true;
     server = new Server(serverData);
 
     server->addPlayer(x, y, name);
-    server->addPlayer(0, 1, "nigga");
     tcpServer = new QTcpServer(this); //было this
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newuser()));
     if (!tcpServer->listen(QHostAddress::LocalHost, 33333) && server_status==0) {
@@ -258,16 +261,21 @@ void GameWindow::slotReadClient()
 {
     QTcpSocket* clientSocket = (QTcpSocket*)sender();
     QByteArray data = clientSocket->readAll();
-    qDebug() << data;
+    qDebug() << data << "\n";
     string sdata = data.toStdString();
     string result = server->doTurn(sdata);
-    QString serverdata = QString::fromStdString(result);
-    QByteArray array;
-    array.append(serverdata);
-
-    qDebug() << clientSocket->write(array);
+    sendtoall(result);
 }
 
+void GameWindow::sendtoall(string msg) {
+
+    QString serverdata = QString::fromStdString(msg);
+    QByteArray array;
+    array.append(serverdata);
+    foreach (QTcpSocket* iter, SClients) {
+        qDebug() << iter->write(array) << "\n";
+    }
+}
 
 void GameWindow::keyPressEvent(QKeyEvent *key) {
     switch (key->key()) {
@@ -294,7 +302,9 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
             if (isMyWindow) move("left");
             break;
         case Qt::Key_D:
-            if (isMyWindow) move("right");
+            if (isMyWindow) {
+                move("right");
+            }
             break;
         case Qt::Key_S:
             if (isMyWindow) move("down");
@@ -424,6 +434,8 @@ void GameWindow::move(string direction) {
         dir = 2;
     }
     switch (i) {
+        case -1:
+            break;
         case 0:
             switch (dir) {
             case 0:
@@ -439,7 +451,6 @@ void GameWindow::move(string direction) {
                 xCoors++;
                 break;
             }
-
             update();
             break;
         case 1:
@@ -477,7 +488,11 @@ int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 
     //return 3 if we can move and there is a mine
     if (isServer) {
         string result = server->move(name, direction);
-        //sendtoall(result);
+        for (auto qwer : server->turnQueue) {
+            cerr << qwer << " ";
+        }
+        cerr << "end of qu\n";
+        sendtoall(result);
         doResultOfTurn(result);
         vector<string> parsed = splitter::split(' ', 5, result);
         cerr << "LOOK AT THIS: " << result << endl;
@@ -487,6 +502,7 @@ int GameWindow::movePlayer(string direction) { //direction: 0 - up, 1 - left, 2 
     else {
         string send = name + " move " + direction;
         sendtoserver(send);
+        return -1;
     }
     return 0;
 }
@@ -496,7 +512,9 @@ void GameWindow::shoot(string direction) {
     if (isServer) {
         //cerr << "shoot started\n";
         string result = server->shoot(name, direction, 3);
-        //sendtoall(result);
+        sendtoall(result);
+        doResultOfTurn(result);
+
     }
     else {
         string send = name + " shoot " + direction + " 3";
@@ -508,7 +526,9 @@ void GameWindow::shoot(string direction) {
 void GameWindow::dig() {
     if (isServer) {
         string result = server->dig(name);
-        //sendtoall(result)
+        sendtoall(result);
+        doResultOfTurn(result);
+
     }
     else {
         string send = name + " dig";
@@ -521,8 +541,9 @@ void GameWindow::dig() {
 
 
 void GameWindow::doResultOfTurn(string turnn) {
+    //cerr << "doing result of " << turnn;
     if (turnn[0] == 'd') {
-        vector<string> parsed = splitter::split(' ', 5, turnn);
+        vector<string> parsed = splitter::split(' ', 6, turnn);
         for (auto q: parsed) {
             cerr << q << "%";
         }
@@ -535,16 +556,27 @@ void GameWindow::doResultOfTurn(string turnn) {
         bullets = stoi(parsed[3]);
         width = stoi(parsed[1]);
         height = stoi(parsed[2]);
+        nameNext = parsed[5];
         initialize();
         return;
     }
     vector<string> turn = splitter::split(' ', 100, turnn);
     string nameP = turn[0];
-    int curlog;
+    nameNext = turn[turn.size() - 1];
+    int curlog = -1;
     for (int i = 0; i < gamelogs.size(); i++) {
         if (gamelogs[i].player.name == nameP) {
             curlog = i;
         }
+    }
+    if (curlog == -1) {
+        if (nameP != name) {
+            gamelogs.push_back(GameLog(nameP, width, height, bullets, life, false, 0, 0));
+        }
+        else {
+            gamelogs.push_back(GameLog(nameP, width, height, bullets, life, true, xCoors, yCoors));
+        }
+        curlog = gamelogs.size() - 1;
     }
     string tolog = nameP;
     if (turn[1] == "move") {
@@ -665,7 +697,3 @@ void GameWindow::showTreasureText() {
 void GameWindow::hideTreasureText() {
     treasureText->hide();
 }
-
-
-void sendtoall(string msg){}
-void sendtoserver(string msg){}

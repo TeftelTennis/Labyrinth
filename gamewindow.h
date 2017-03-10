@@ -44,6 +44,7 @@ public:
     bool isServer;
     bool isMyWindow;
     string name;
+    string nameNext;
     vector<GameLog> gamelogs;
     vector<string> logs;
 

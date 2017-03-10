@@ -59,6 +59,9 @@ void Server::addPlayer(int i, int j, string nameP) {
     //Debug.Log("addPlayer " + nameP + ' ' + tmp.toString());
     field->cell[i][j].push_back(new Player(nameP, startAmmo, startLife));
     turnQueue.push_back(nameP);
+    if (turnQueue.size() == 1) {
+        turnPlayer = nameP;
+    }
 
     //var ip : String = player.externalIP;
     //Debug.Log(ip + ' ' + nameP);
@@ -185,8 +188,9 @@ string Server::shoot(string nameP, string direct, int item) {
         pos = field->move(pos.first, pos.second, direction);
     }
 
-    result += victims.size();
-    cerr << " victims = " << victims.size();
+    //cerr << "result is " << direct <<"\n";
+    result += to_string(victims.size());
+    //cerr << " victims = " << victims.size();
 
     for (auto iter = victims.begin(); iter != victims.end(); iter++) {
         Player* tmpPlayer = *iter;
@@ -217,7 +221,7 @@ string Server::shoot(string nameP, string direct, int item) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    return nameP + " " + "shoot " + direct + " " + to_string(item) + " " + result + " " + nameNext;
+    return nameP + " shoot " + direct + " " + to_string(item) + " " + result + " " + nameNext;
 }
 
 string Server::dig(string nameP) {
@@ -236,7 +240,6 @@ string Server::dig(string nameP) {
     bool findEmpty = false;
 
     for (auto it : field->cell[get<0>(playerPos)][get<1>(playerPos)]) {
-        cerr << "type: " << it->type <<'\n';
         if (it->type == LabyrinthObject::TYPE_TREASURE) {
             treasures.push_back(static_cast<Treasure*>(it));
         }
@@ -246,7 +249,6 @@ string Server::dig(string nameP) {
     Item* item;
     Trap* trap;
     for (auto treasure : treasures) {
-        //cerr << treasure->content->type << " - TYPE \n";
         if (treasure->content->type == LabyrinthObject::TYPE_TRAP) {
             result += " 1";
             trap = static_cast<Trap*>(treasure->content);
@@ -260,8 +262,6 @@ string Server::dig(string nameP) {
         }
         treasure->remove();
     }
-
-
     if (!turnQueue.empty()) {
         nameNext = turnQueue.front();
         turnQueue.pop_front();
@@ -271,7 +271,7 @@ string Server::dig(string nameP) {
     }
     turnQueue.push_back(nameP);
     turnPlayer = nameNext;
-    return nameP + " " + "dig" + result + " " + nameNext;
+    return nameP + " dig " + result + " " + nameNext;
 }
 
 string Server::doTurn(string turn) {
@@ -285,13 +285,9 @@ string Server::doTurn(string turn) {
         string name = arr[3];
         addPlayer(x, y, name);
         string qwe = "data " + to_string(field->w) + " " +  to_string(field->h) + " "
-                + to_string(serverData.startAmmo) + " " + to_string(serverData.startLife);
+                + to_string(startAmmo) + " " + to_string(startLife) + " " + turnPlayer;
+        cerr << qwe << "\n";
         return qwe;
-    }
-
-    if (nameP != turnPlayer) {
-        commandLog.push_back("Server>'" + nameP + "' try to do turn. turnPlayer = " + turnPlayer);
-    //    return "bad";
     }
     commandLog.push_back(nameP + ":>" + turn);
     //string arr[3] = turn.Split([" "], 3, System.StringSplitOptions.None);

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>447</width>
+    <width>400</width>
     <height>341</height>
    </rect>
   </property>
@@ -375,15 +375,12 @@
     </item>
    </layout>
   </widget>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>menuButton</zorder>
   <zorder>pushButton</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder></zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>menuButton</zorder>
  </widget>
  <resources/>
  <connections>

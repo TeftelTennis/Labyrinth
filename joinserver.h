@@ -18,6 +18,8 @@ public:
     int getXCoor();
     int getYCoor();
     string getName();
+    QString getIp();
+    int getPort();
 
 private slots:
     void on_returnButton_clicked();

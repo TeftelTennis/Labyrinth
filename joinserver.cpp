@@ -24,7 +24,7 @@ void JoinServer::on_returnButton_clicked()
 void JoinServer::on_connectButton_clicked()
 {
     GameWindow *game = new GameWindow(this);
-    game->startJoin(getXCoor(), getYCoor(), getName());
+    game->startJoin(getXCoor(), getYCoor(), getName(), getIp(), getPort());
     std::cerr << "joined";
     hide();
     game->setWindowTitle("Labyrinth");
@@ -43,4 +43,12 @@ int JoinServer::getYCoor() {
 
 string JoinServer::getName() {
     return ui->nameLine->text().toStdString();
+}
+
+QString JoinServer::getIp() {
+    return ui->ipLine->text();
+}
+
+int JoinServer::getPort() {
+    return ui->portLine->text().toInt();
 }

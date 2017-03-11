@@ -90,7 +90,7 @@ string Server::move(string nameP, string direct) {
         Trap* trap;
         vector<Player*> corpses;
         Player* corpse;
-        bool treasure;
+        bool treasure = false;
 
         for (auto obj : field->cell[get<0>(playerPos)][get<1>(playerPos)]) {
             if (obj->type == LabyrinthObject::TYPE_TREASURE) {

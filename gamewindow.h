@@ -90,7 +90,7 @@ public:
     void dig();
     void sendtoall(string msg);
     void sendtoserver(string msg);
-    void startJoin(int x, int y, string name);
+    void startJoin(int x, int y, string name, QString ip, int port);
 
 protected slots:
     void keyPressEvent(QKeyEvent *key); //do smth depend on the key pressed

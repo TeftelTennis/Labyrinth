@@ -187,7 +187,7 @@ void GameWindow::sendtoserver(string data) {
 }
 
 
-void GameWindow::startJoin(int x, int y, string name) {
+void GameWindow::startJoin(int x, int y, string name, QString ip, int port) {
     tcpSocket = new QTcpSocket(this);
 
     in.setDevice(tcpSocket);
@@ -203,7 +203,12 @@ void GameWindow::startJoin(int x, int y, string name) {
 
     xCoors = x;
     yCoors = y;
-    tcpSocket->connectToHost(QHostAddress::LocalHost, 33333);
+    if (ip == "localhost") {
+        tcpSocket->connectToHost(QHostAddress::LocalHost, port);
+    }
+    else {
+        tcpSocket->connectToHost(ip, port);
+    }
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataFromServer()));
     string qstr = "new " + to_string(x) + " " + to_string(y) + " " + name;
     sendtoserver(qstr);
@@ -230,17 +235,39 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
     this->isTreasure = false;
     server = new Server(serverData);
     winner = "null";
+    cerr <<'\n';
+    for (int i = 0; i < server->field->w; i++) {
+        for (int j = 0; j < server->field->h; j++) {
+            cerr << server->field->cell[i][j].size() << " ";
+        }
+        cerr << "\n";
+    }
 
 
     server->addPlayer(x, y, name);
     tcpServer = new QTcpServer(this);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newuser()));
-    if (!tcpServer->listen(QHostAddress::LocalHost, 33333) && server_status==0) {
+
+    QString ipAddress;
+    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+    // use the first non-localhost IPv4 address
+    for (int i = 0; i < ipAddressesList.size(); ++i) {
+        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
+            ipAddressesList.at(i).toIPv4Address()) {
+            ipAddress = ipAddressesList.at(i).toString();
+            break;
+        }
+    }
+    // if we did not find one, use IPv4 localhost
+    if (ipAddress.isEmpty())
+        ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
+    if (!tcpServer->listen() && server_status==0) {
         qDebug() <<  QObject::tr("Unable to start the server: %1.").arg(tcpServer->errorString());
     } else {
         server_status=1;
         cerr << "started";
-        qDebug() << tcpServer->serverAddress() << " " << tcpServer->serverPort() << " adress and port\n";
+        addLog(ipAddress.toStdString() + " " + to_string(tcpServer->serverPort()));
+        qDebug() << ipAddress << " " << tcpServer->serverPort() << " adress and port\n";
         qDebug() << tcpServer->isListening() << "TCPSocket listen on port";
         qDebug() << QString::fromUtf8("Сервер запущен!");
     }
@@ -264,6 +291,7 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
 void GameWindow::newuser()
 {
     if(server_status==1){
+        addLog("new connection");
         qDebug() << QString::fromUtf8("У нас новое соединение!");
         QTcpSocket* clientSocket=tcpServer->nextPendingConnection();
         int idusersocs=clientSocket->socketDescriptor();

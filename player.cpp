@@ -5,7 +5,7 @@ string Player::tostring() {
     string tmp = "player: name = " + name + "; life = " +
         to_string(life) + "; alive = " + to_string(alive) + "; items : ";
     for (auto item : items) {
-        tmp += "(" + item.tostring() + " )";
+        tmp += "(" + item->tostring() + " )";
     }
     return tmp + ";";
  }
@@ -13,8 +13,8 @@ string Player::tostring() {
 int Player::itemCount(int itemType) {
     int ans = 0;
     for (int i = 0; i < items.size(); i++) {
-        Item tmp = items[i];
-        if (tmp.itemType == itemType) {
+        Item* tmp = items[i];
+        if (tmp->itemType == itemType) {
             ans++;
         }
     }
@@ -28,8 +28,8 @@ int Player::itemCount(Item a) {
 void Player::deleteItem(int itemType) {
     int ans = 0;
     for (int i = 0; i < items.size(); i++) {
-        Item tmp = items[i];
-        if (tmp.itemType == itemType) {
+        Item* tmp = items[i];
+        if (tmp->itemType == itemType) {
             items.erase(items.begin() + i);
             return;
         }
@@ -53,7 +53,7 @@ Player::Player(string Name, int Ammo, int playerLife) {
     alive = true;
     items.clear();
     for (int i = 0; i < Ammo; i++) {
-        items.push_back(Bullet());
+        items.push_back(new Bullet());
     }
 }
 
@@ -66,4 +66,8 @@ void Player::take(Player& corpse) {
 
 int Player::ammo() {
     return itemCount(Bullet());
+}
+
+int Player::keys() {
+    return itemCount(Key());
 }

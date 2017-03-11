@@ -23,7 +23,6 @@ void JoinServer::on_returnButton_clicked()
 
 void JoinServer::on_connectButton_clicked()
 {
-   //QTcpSocket* socket = new QTcpSocket(this);
     GameWindow *game = new GameWindow(this);
     game->startJoin(getXCoor(), getYCoor(), getName());
     std::cerr << "joined";
@@ -32,8 +31,6 @@ void JoinServer::on_connectButton_clicked()
     game->setModal(true);
     game->exec();
     show();
-    //TODO: open OpenGL window
-
 }
 
 int JoinServer::getXCoor() {

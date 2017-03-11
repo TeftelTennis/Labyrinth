@@ -3,7 +3,7 @@
 
 
 string Treasure::tostring() {
-    string res = "Treasure. Conntents : ";
+    string res = "Treasure. Contents : ";
     res += content->tostring() + " ";
     return res;
 }
@@ -12,7 +12,7 @@ Treasure::Treasure() {
     type = TYPE_TREASURE;
 }
 
-Treasure::Treasure(LabyrinthObject Content) {
-    content = &Content;
+Treasure::Treasure(LabyrinthObject* Content) {
+    content = Content;
     type = TYPE_TREASURE;
 }

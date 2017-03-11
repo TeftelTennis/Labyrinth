@@ -7,7 +7,7 @@
 using namespace std;
 
 ServerData::ServerData(int width, int height, int startAmmo,
-                       int startLife, int keys, int bullets, int mines, float wallProb, float staticTreasureProb, float loveToiletsProb,
+                       int startLife, int keys, int bullets, float wallProb, float staticTreasureProb, float loveToiletsProb,
                        bool canPutTreasureTogether, bool useRandomTreasure) {
     this->width = width;
     this->height = height;
@@ -19,9 +19,16 @@ ServerData::ServerData(int width, int height, int startAmmo,
     data.canPutTreasureTogether = canPutTreasureTogether;
     data.useRandomTreasure = useRandomTreasure;
 
-    data.treasures = vector<Treasure>();
+    data.treasures = vector<Treasure*>();
 
     //генерация трежаров (просто запихиваем new тип() в вектор)
+
+    for (int i = 0; i < bullets; i++) {
+        data.treasures.push_back(new Treasure (new Bullet()));
+    }
+    for (int i = 0; i < keys; i++) {
+        data.treasures.push_back(new Treasure(new Key()));
+    }
 
 
     cerr << "serverdataend";

@@ -126,7 +126,6 @@ void Labyrinth::movePlayer(string name, Direction direct) {
 }
 
 void Labyrinth::killPlayer(string name) {
-    //Debug.Log("Try to kill : " + name);
     tuple<int, int, int> playerPos = findPlayer(name);
     auto player = static_cast<Player*>(cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
     player->alive = false;
@@ -148,6 +147,26 @@ void Labyrinth:: makeBorder() {
         horizontWalls[0][c] = "border";
         horizontWalls[h][c] = "border";
     }
+    int wall = rand() % 4;
+    if (wall % 2 == 0) {
+        int wei = rand() % w;
+        if (wall == 0) {
+            horizontWalls[0][wei] = "door";
+        }
+        else {
+            horizontWalls[h][wei] = "door";
+        }
+    }
+    else {
+        int hei = rand() % h;
+        if (wall == 1) {
+            verticalWalls[hei][0] = "door";
+        }
+        else {
+            verticalWalls[hei][w] = "door";
+        }
+
+    }
 }
 
 
@@ -160,9 +179,7 @@ void Labyrinth::create() {
         int i = rand() % h;
         int j = rand() % w;
         int k = rand() % 4;
-        //var int i = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, h - 0.5 - float.Epsilon));
-//vrode tak //var int j = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, w - 0.5 - float.Epsilon));
-        //var k : int = Mathf.RoundToInt(Random.Range(-0.5 + float.Epsilon, 4 - 0.5 - float.Epsilon));
+
         pair<int, int> newPos = move(i, j, Direction(k));
         if (checkPos(newPos.first, newPos.second)) {
             int lastk = dsu->k;
@@ -173,7 +190,6 @@ void Labyrinth::create() {
             }
         }
     }
-    //cerr << "wallProb = " << data.wallProb;
     //Ставит  остальные стены
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
@@ -181,7 +197,6 @@ void Labyrinth::create() {
                 if (wasWall[i][j][k] != true) {
                     float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
                     if (random < data.wallProb) {
-                        //cerr << "adddddd";
                         addWall(i, j, Direction(k), "wall");
                     }
                 }
@@ -192,16 +207,16 @@ void Labyrinth::create() {
     int pos = 0;
 
     //Put treasures
-    for (int i = 0; i <= data.treasures.size(); i++) {
+    for (int i = 0; i <= static_cast<int>(data.treasures.size()); i++) {
         Treasure* treasure;
         if (i == 0) {
-            treasure = new Treasure(Key());
+            treasure = new Treasure(new Key());
         }
         else
             if (data.useRandomTreasure) {
-                treasure = &data.treasures[rand() % data.treasures.size()];
+                treasure =  data.treasures[rand() % data.treasures.size()];
             } else {
-                treasure = &data.treasures[pos++];
+                treasure = data.treasures[pos++];
             }
         pair<int, int> treasurePos;
         int seed = 0; // How many times you tried to choose

@@ -9,6 +9,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QScrollBar>
 
 #include "hostserver.h"
 #include "server.h"
@@ -36,8 +37,6 @@ public:
     int yCoors;
     int width;
     int height;
-    int playerXCoor;
-    int playerYCoor;
     int keys;
     int bullets;
     int life;
@@ -46,6 +45,7 @@ public:
     bool isInitialised;
     bool isTreasure;
     string name;
+    string winner;
     string nameNext;
     vector<GameLog> gamelogs;
     vector<string> logs;
@@ -61,9 +61,7 @@ public:
 
 
     Server* server;
-    //Client client;
-    int getPosFromXCoor();
-    int getPosFromYCoor();
+
     int getPosFromXCoors(int x);
     int getPosFromYCoors(int y);
 
@@ -82,11 +80,9 @@ public:
 
     void setServerParams(string name, int x, int y, ServerData serverData);
     void initialize(); //Drawing the start field, without any walls
-    void update(); //update visual part????
+    void update(); //update visual part
     void doResultOfTurn(string turnn);
-    void updateInfo();
     void move(string direction);
-    int movePlayer(string direction); //Move player
 
     void showTreasureText();
     void hideTreasureText();

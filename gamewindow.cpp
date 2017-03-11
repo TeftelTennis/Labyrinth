@@ -28,15 +28,7 @@ GameWindow::~GameWindow()
     delete ui;
 }
 
-int GameWindow::getPosFromXCoor() {
-    return 10 + (xCoors - 1) * (boxWidth + wallWidth);
-}
 
-int GameWindow::getPosFromYCoor() {
-    return 10 + (yCoors - 1) * (boxWidth + wallWidth);
-}
-
-//сорян за копипасту ебаную, вдруг просто что-то полетит еще, потом подотру
 int GameWindow::getPosFromXCoors(int x) {
     return 10 + (x - 1) * (boxWidth + wallWidth);
 }
@@ -58,6 +50,7 @@ void GameWindow::drawField(GameLog *gamelog) {
 void GameWindow::addLog(string s) {
     QLabel *label = new QLabel(QString::fromStdString(s));
     layout->addWidget(label);
+    area->verticalScrollBar()->setSliderPosition(area->height());
 }
 
 void GameWindow::drawLines(int width, int height, int sumWidth, int sumHeight) {
@@ -81,6 +74,18 @@ void GameWindow::drawLines(int width, int height, int sumWidth, int sumHeight) {
 }
 
 void GameWindow::drawMyWindow(GameLog *gamelog) {
+    if (winner != "null") {
+        scene->clear();
+        scene->addText(QString::fromStdString(winner + " WON THE GAME!"), QFont("Times", 13, QFont::Bold));
+        this->resize(500, 500);
+        return;
+    }
+    if (gamelog->player.life == 0) {
+        scene->clear();
+        scene->addText("Game Over.", QFont("Times", 13, QFont::Bold));
+        this->resize(500, 500);
+        return;
+    }
     QBrush brush = QBrush(0xcfbea5);
     QPen myPen = QPen(Qt::black);
     myPen.setWidth(5);
@@ -96,6 +101,12 @@ void GameWindow::drawMyWindow(GameLog *gamelog) {
 }
 
 void GameWindow::drawEnemy(GameLog *gamelog) {
+    if (winner != "null") {
+        scene->clear();
+        scene->addText(QString::fromStdString(winner + " WON THE GAME!"), QFont("Times", 13, QFont::Bold));
+        this->resize(500, 500);
+        return;
+    }
     int thisWidth = width * 2 - 1;
     int thisHeight = height * 2 - 1;
     int thisSummaryWidth = thisWidth * boxWidth + (thisWidth - 1) * wallWidth;
@@ -107,7 +118,11 @@ void GameWindow::drawEnemy(GameLog *gamelog) {
     scene->addRect(10, 10, thisSummaryWidth, thisSummaryHeight, myPen, brush);
 
     this->resize(thisSummaryWidth + 400, thisSummaryHeight + 100);
+    cerr << "player has " << gamelog->player.life << " lifes\n";
     QString playerName = QString::fromStdString(gamelog->player.name);
+    if (gamelog->player.life <= 0) {
+        playerName += " DEAD";
+    }
     QGraphicsTextItem *plname = scene->addText(playerName, QFont("Times", 13, QFont::Bold));
     plname->setPos(thisSummaryWidth / 2, thisSummaryHeight + 40);
     drawLines(thisWidth, thisHeight, thisSummaryWidth, thisSummaryHeight);
@@ -183,6 +198,8 @@ void GameWindow::startJoin(int x, int y, string name) {
     isInitialised = false;
     isTreasure = false;
     logPosition = 0;
+    winner = "null";
+    nameNext = "null";
 
     xCoors = x;
     yCoors = y;
@@ -212,9 +229,11 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
     this->isInitialised = true;
     this->isTreasure = false;
     server = new Server(serverData);
+    winner = "null";
+
 
     server->addPlayer(x, y, name);
-    tcpServer = new QTcpServer(this); //было this
+    tcpServer = new QTcpServer(this);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newuser()));
     if (!tcpServer->listen(QHostAddress::LocalHost, 33333) && server_status==0) {
         qDebug() <<  QObject::tr("Unable to start the server: %1.").arg(tcpServer->errorString());
@@ -233,6 +252,7 @@ void GameWindow::setServerParams(string name, int x, int y, ServerData serverDat
     yCoors = serverData.height - y;
     keys = 0;
     bullets = serverData.startAmmo;
+    life = serverData.startLife;
     width = serverData.width;
     height = serverData.height;
     gamelogs.push_back(GameLog(this->name, width, height, bullets, 1, true, x, y));
@@ -249,15 +269,6 @@ void GameWindow::newuser()
         int idusersocs=clientSocket->socketDescriptor();
         SClients[idusersocs]=clientSocket;
         connect(SClients[idusersocs],SIGNAL(readyRead()),this, SLOT(slotReadClient()));
-        //string qwe = "data " + to_string(server->field->w) + " " +  to_string(server->field->h) + " "
-        //    + to_string(server->serverData.startAmmo) + " " + to_string(server->serverData.startLife);
-
-        //QString serverdata = QString::fromStdString(qwe);
-        //QByteArray array;
-        //array.append(serverdata);
-
-        //qDebug() << clientSocket->write(array);
-
     }
 }
 
@@ -287,7 +298,6 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
         case Qt::Key_Escape:
             close();
             break;
-            //Нужен какой-то счетчик-итератор, типа знать где мы находимся
         case Qt::Key_T:
             if (logPosition != 0) {
                 scene->clear();
@@ -295,39 +305,39 @@ void GameWindow::keyPressEvent(QKeyEvent *key) {
             }
             break;
         case Qt::Key_Y:
-            if (logPosition != gamelogs.size() - 1) {
+            if (logPosition != static_cast<int>(gamelogs.size() - 1)) {
                 scene->clear();
                 drawField(&gamelogs[++logPosition]);
             }
             break;
         case Qt::Key_W:
-            if (isMyWindow) move("up");
+            if (isMyWindow && (nameNext == name)) move("up");
             break;
         case Qt::Key_A:
-            if (isMyWindow) move("left");
+            if (isMyWindow && (nameNext == name)) move("left");
             break;
         case Qt::Key_D:
-            if (isMyWindow) {
+            if (isMyWindow && (nameNext == name)) {
                 move("right");
             }
             break;
         case Qt::Key_S:
-            if (isMyWindow) move("down");
+            if (isMyWindow && (nameNext == name)) move("down");
             break;
         case Qt::Key_I:
-            if (isMyWindow) shoot("up");
+            if (isMyWindow && (nameNext == name)) shoot("up");
             break;
         case Qt::Key_J:
-            if (isMyWindow) shoot("left");
+            if (isMyWindow && (nameNext == name)) shoot("left");
             break;
         case Qt::Key_K:
-            if (isMyWindow) shoot("down");
+            if (isMyWindow && (nameNext == name)) shoot("down");
             break;
         case Qt::Key_L:
-            if (isMyWindow) shoot("right");
+            if (isMyWindow && (nameNext == name)) shoot("right");
             break;
         case Qt::Key_Q:
-            if (isMyWindow) dig();
+            if (isMyWindow && (nameNext == name)) dig();
             break;
     }
 }
@@ -346,8 +356,8 @@ void GameWindow::drawMenu() {
     QFont font("Times", 16, QFont::Bold);
     treasureText = scene->addText("TREASURE!", font);
     treasureText->setDefaultTextColor(Qt::red);
-    keyNum = scene->addText(QString::number(keys), QFont("Times", 16));
-    bulletNum = scene->addText(QString::number(bullets), QFont("Times", 16));
+    keyNum = scene->addText(QString::number(gamelogs[logPosition].player.keys()), QFont("Times", 16));
+    bulletNum = scene->addText(QString::number(gamelogs[logPosition].player.ammo()), QFont("Times", 16));
 
     controls->setPos(100 + summaryWidth, 20);
     inventory->setPos(100 + summaryWidth, 120);
@@ -380,38 +390,19 @@ void GameWindow::drawMenu() {
 
 
 void GameWindow::update() {
-//    playerXCoor = getPosFromXCoor();
-//    playerYCoor = getPosFromYCoor();
-//    QPen myPen = QPen(Qt::black);
-//    myPen.setWidth(3);
-//    QBrush blueBrush = QBrush(Qt::blue);
-//    scene->removeItem((QGraphicsItem*) playerIcon);
-//    playerIcon = scene->addEllipse(playerXCoor + 5, playerYCoor + 5, 40, 40, myPen, blueBrush);
     drawField(&gamelogs[logPosition]);
 }
 
-void GameWindow::updateInfo() {
-    scene->removeItem((QGraphicsItem*) keyNum);
-    scene->removeItem((QGraphicsItem*) bulletNum);
-    keyNum = scene->addText(QString::number(keys), QFont("Times", 16));
-    bulletNum = scene->addText(QString::number(bullets), QFont("Times", 16));
-//    if (check() == 1) {
-//        showTreasureText();
-//    } else {
-//        hideTreasureText();
-//    }
-}
 
 void GameWindow::move(string direction) {
     if (isServer) {
-        //cerr << "shoot started\n";
         string result = server->move(name, direction);
         sendtoall(result);
         doResultOfTurn(result);
 
     }
     else {
-        string send = name + " shoot " + direction + " 3";
+        string send = name + " move " + direction;
         sendtoserver(send);
     }
     update();
@@ -422,7 +413,6 @@ void GameWindow::move(string direction) {
 void GameWindow::shoot(string direction) {
     cerr << "shoot";
     if (isServer) {
-        //cerr << "shoot started\n";
         string result = server->shoot(name, direction, 3);
         sendtoall(result);
         doResultOfTurn(result);
@@ -432,7 +422,6 @@ void GameWindow::shoot(string direction) {
         string send = name + " shoot " + direction + " 3";
         sendtoserver(send);
     }
-    //if killed someone then showKillText()
 }
 
 void GameWindow::dig() {
@@ -447,16 +436,15 @@ void GameWindow::dig() {
         sendtoserver(send);
     }
     hideTreasureText();
-    //+1 to players stash
-    //remove treasure sector from this position
 }
 
 
 void GameWindow::doResultOfTurn(string turnn) {
+
     if(logPosition == 0) {
         isTreasure = false;
     }
-    //cerr << "doing result of " << turnn;
+
     if ((turnn[0] == 'd')) {
         if (isInitialised) {
             return;
@@ -472,8 +460,8 @@ void GameWindow::doResultOfTurn(string turnn) {
         bullets = stoi(parsed[3]);
         width = stoi(parsed[1]);
         height = stoi(parsed[2]);
-        nameNext = parsed[5];
-        gamelogs.push_back(GameLog(name, width, height, bullets, 1, true, xCoors, yCoors));
+        life = stoi(parsed[4]);
+        gamelogs.push_back(GameLog(name, width, height, bullets, life, true, xCoors, yCoors));
         xCoors += 1;
         yCoors = stoi(parsed[2]) - yCoors;
         isInitialised = true;
@@ -484,7 +472,7 @@ void GameWindow::doResultOfTurn(string turnn) {
     string nameP = turn[0];
     nameNext = turn[turn.size() - 1];
     int curlog = -1;
-    for (int i = 0; i < gamelogs.size(); i++) {
+    for (int i = 0; i < static_cast<int>(gamelogs.size()); i++) {
         if (gamelogs[i].player.name == nameP) {
             curlog = i;
         }
@@ -493,8 +481,11 @@ void GameWindow::doResultOfTurn(string turnn) {
         gamelogs.push_back(GameLog(nameP, 2 * width - 1, 2 * height - 1, bullets, life, false, width - 1, height - 1));
         curlog = gamelogs.size() - 1;
     }
-    string tolog = nameP;
+    string tolog = nameP + " ";
     if (turn[1] == "move") {
+        if (turn[3] == "win") {
+            winner = nameP;
+        }
         if (turn[3] == "wall") {
             tolog += "cannot move to " + turn[2] + " because of wall";
             gamelogs[curlog].addWall(Direction(turn[2]), "wall");
@@ -521,19 +512,44 @@ void GameWindow::doResultOfTurn(string turnn) {
             }
         }
     } else if (turn[1] == "shoot") {
+        gamelogs[logPosition].player.deleteItem(Bullet());
         int victimCount = stoi(turn[4]);
         tolog += "shoots " + turn[2] + " and hits " + turn[4] + " target(s): ";
         bool isSamePos = turn[victimCount + 5] == "1";
         for (int it = 0; it < victimCount; it++) {
-            string name = turn[5 + it];
-            tolog += name + "is injured ";
-            if (isSamePos) {
+            string nameHit = turn[5 + it];
+            tolog += nameHit + " is injured ";
+            int hitlog = -1;
+            for (int i = 0; i < static_cast<int>(gamelogs.size()); i++) {
+                if (gamelogs[i].player.name == nameHit) {
+                    hitlog = i;
+                    gamelogs[i].player.life--;
+                    break;
+                }
+            }
+            if (hitlog == -1) {
+                gamelogs.push_back(GameLog(nameHit, 2 * width - 1, 2 * height - 1, bullets, life - 1, false, width - 1, height - 1));
+                hitlog = gamelogs.size() - 1;
+            }
+            if (isSamePos && (gamelogs[hitlog].player.life == 0)) {
                 tolog += "and you took his items";
             }
         }
     } else if (turn[1] == "dig") {
         int count = stoi(turn[2]);
-        tolog += " digs " + turn[2] + " items";
+        tolog += " digs " + turn[2] + " items:";
+        for (int iter = 0; iter < count; iter++) {
+            if (stoi(turn[3 + 2 * iter]) == 0) {
+                if (turn[4 + 2 * iter] == "4") {
+                    tolog += " key";
+                    gamelogs[curlog].player.items.push_back(new Key());
+                }
+                else {
+                    tolog += " bullet";
+                    gamelogs[curlog].player.items.push_back(new Bullet());
+                }
+            }
+        }
     }
     logs.push_back(tolog);
     addLog(tolog);

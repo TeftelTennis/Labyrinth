@@ -39,7 +39,6 @@ SOURCES += main.cpp\
     gamewindow.cpp \
     serverdata.cpp \
     server.cpp \
-    network.cpp \
     splitter.cpp \
     labyrinthobjectfactory.cpp\
     trap.cpp
@@ -59,7 +58,6 @@ HEADERS  += labyrinth.h \
     gamewindow.h \
     serverdata.h \
     server.h \
-    network.h \
     splitter.h \
     labyrinthobjectfactory.h \
     trap.h

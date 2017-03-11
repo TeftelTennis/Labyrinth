@@ -11,10 +11,10 @@ public:
     LabyrinthData();
 
     double wallProb;
-    vector<Treasure> treasures;
+    vector<Treasure*> treasures;
     bool useRandomTreasure;
     int treasureCount;
-    double loveToilets; // Если хочет ставить в сартр
+    double loveToilets;
     double staticTreasureProb;
     bool canPutTreasureTogether;
 

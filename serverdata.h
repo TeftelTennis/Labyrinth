@@ -15,7 +15,7 @@ public:
 
     ServerData();
     ServerData(int width, int height, int startAmmo,
-               int startLife, int keys, int bullets, int mines, float wallProb, float staticTreasureProb, float loveToiletsProb,
+               int startLife, int keys, int bullets, float wallProb, float staticTreasureProb, float loveToiletsProb,
                bool canPutTreasureTogether, bool useRandomTreasure);
 
 };

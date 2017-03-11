@@ -7,7 +7,7 @@
 
 class Player : public LabyrinthObject {
 public:
-    vector<Item> items;
+    vector<Item*> items;
     int life;
     bool alive;
     int itemCount(int itemType);
@@ -18,6 +18,7 @@ public:
     Player(string Name, int Ammo, int playerLife);
     void take(Player& corpse);
     int ammo();
+    int keys();
     string tostring();
 };
 

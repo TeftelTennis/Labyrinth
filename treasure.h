@@ -12,7 +12,7 @@ public:
 
     Treasure();
 
-    Treasure(LabyrinthObject Content);
+    Treasure(LabyrinthObject* Content);
 };
 
 #endif // TREASURE_H

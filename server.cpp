@@ -22,16 +22,16 @@ Server::Server(ServerData serverData) {
 
     field->create();
 
+
     turnQueue.clear();
     players.clear();
 }
 
-//Вход выход игроков
+//Вход игроков
 void Server::killPlayer(string name) {
     if (turnPlayer == name) {
         turnPlayer = turnQueue.front();
         turnQueue.pop_front();
-        //netAdmin.sendWhoNext(turnPlayer);
         return;
     }
     field->killPlayer(name);
@@ -46,27 +46,11 @@ void Server::killPlayer(string name) {
 
 
 
-void Server::OnPlayerDisconnected () {
-    /*var ip : String = player.externalIP;
-    Debug.Log(ip + " - DISCONNECTED");
-    killPlayer(players[ip]);
-    Network.RemoveRPCs(player, 0);
-    Network.DestroyPlayerObjects(player);*/
-}
-
 void Server::addPlayer(int i, int j, string nameP) {
     Player tmp = Player(nameP, startAmmo, startLife);
-    //Debug.Log("addPlayer " + nameP + ' ' + tmp.toString());
     field->cell[i][j].push_back(new Player(nameP, startAmmo, startLife));
-    turnQueue.push_back(nameP);
-    if (turnQueue.size() == 1) {
-        turnPlayer = nameP;
-    }
-
-    //var ip : String = player.externalIP;
-    //Debug.Log(ip + ' ' + nameP);
-    //if (!players.Contains(ip))
-    //    players.Add(ip, nameP);
+    //в конец
+    turnQueue.push_front(nameP);
 }
 
 //Обрабатывает движение игрока
@@ -78,8 +62,8 @@ string Server::move(string nameP, string direct) {
     tuple<int, int, int> playerPos = field->findPlayer(nameP);
     Player* player = static_cast<Player*> (field->cell[get<0>(playerPos)][get<1>(playerPos)][get<2>(playerPos)]);
     for (int it = 0; it < player->items.size(); it++) {
-        Item itt = player->items[it];
-        if (itt.itemType == Item::ITEM_TYPE_KEY) {
+        Item* itt = player->items[it];
+        if (itt->itemType == Item::ITEM_TYPE_KEY) {
             hasKey = true;
         }
     }
@@ -87,21 +71,15 @@ string Server::move(string nameP, string direct) {
 
     if (wall == "door") {
         if (hasKey) {
-            // : WIN!!!
-            //Debug.Log(nameP + " - WINNER!!!");
+            result = "win";
         } else {
             result = "wall";
             nameNext = nameP;
         }
     } else if (wall == "empty") {
-        if (!turnQueue.empty()) {
-            nameNext = turnQueue.front();
-            turnQueue.pop_front();
-        }
-        else {
-            nameNext = nameP;
-        }
-        turnQueue.push_back(nameP);
+        nameNext = turnQueue.front();
+        turnQueue.pop_front();
+        turnQueue.push_back(nameNext);
         playerPos = field->findPlayer(nameP);
         cerr << get<0>(playerPos) << " " << get<1>(playerPos) << " " << get<2>(playerPos) << "\n";
         field->movePlayer(nameP, direction);
@@ -149,7 +127,7 @@ string Server::move(string nameP, string direct) {
     }
     cerr << result << "\n\n";
     turnPlayer = nameNext;
-    return nameP + " move " + direct + " " +  result + " " + nameNext;
+    return nameP + " move " + direct + " " + result + " " + turnPlayer;
 }
 
 string Server::shoot(string nameP, string direct, int item) {
@@ -184,13 +162,10 @@ string Server::shoot(string nameP, string direct, int item) {
                 break;
             }
         }
-        //Debug.Log(direction.getName());
         pos = field->move(pos.first, pos.second, direction);
     }
 
-    //cerr << "result is " << direct <<"\n";
     result += to_string(victims.size());
-    //cerr << " victims = " << victims.size();
 
     for (auto iter = victims.begin(); iter != victims.end(); iter++) {
         Player* tmpPlayer = *iter;
@@ -212,26 +187,14 @@ string Server::shoot(string nameP, string direct, int item) {
         result += " 0";
     }
 
-    if (!turnQueue.empty()) {
-        nameNext = turnQueue.front();
-        turnQueue.pop_front();
-    }
-    else {
-        nameNext = nameP;
-    }
-    turnQueue.push_back(nameP);
+    nameNext = turnQueue.front();
+    turnQueue.pop_front();
+    turnQueue.push_back(nameNext);
     turnPlayer = nameNext;
     return nameP + " shoot " + direct + " " + to_string(item) + " " + result + " " + nameNext;
 }
 
 string Server::dig(string nameP) {
-    //cerr << "CELLS\n";
-    //for (int i = 0; i < field->w; i++) {
-    //    for (int j = 0; j < field->h; j++) {
-    //        cerr << field->cell[i][j].size() << " ";
-    //    }
-    //    cerr << "\n";
-    //}
     string result = "";
     string nameNext;
     tuple<int, int, int> playerPos = field->findPlayer(nameP);
@@ -249,7 +212,7 @@ string Server::dig(string nameP) {
     Item* item;
     Trap* trap;
     for (auto treasure : treasures) {
-        if (treasure->content->type == LabyrinthObject::TYPE_TRAP) {
+         if (treasure->content->type == LabyrinthObject::TYPE_TRAP) {
             result += " 1";
             trap = static_cast<Trap*>(treasure->content);
             trap->cought(*player, field);
@@ -257,19 +220,14 @@ string Server::dig(string nameP) {
         } else {
             result += " 0";
             item = static_cast<Item*>(treasure->content);
-            player->items.push_back(*item);
-            result += " " + item->itemType;
+            player->items.push_back(item);
+            result += " " + to_string(item->itemType);
         }
         treasure->remove();
     }
-    if (!turnQueue.empty()) {
-        nameNext = turnQueue.front();
-        turnQueue.pop_front();
-    }
-    else {
-        nameNext = nameP;
-    }
-    turnQueue.push_back(nameP);
+    nameNext = turnQueue.front();
+    turnQueue.pop_front();
+    turnQueue.push_back(nameNext);
     turnPlayer = nameNext;
     return nameP + " dig " + result + " " + nameNext;
 }
@@ -290,8 +248,6 @@ string Server::doTurn(string turn) {
         return qwe;
     }
     commandLog.push_back(nameP + ":>" + turn);
-    //string arr[3] = turn.Split([" "], 3, System.StringSplitOptions.None);
-    //SPLIT
 
     string type = arr[1];
 
@@ -307,98 +263,6 @@ string Server::doTurn(string turn) {
 void Server::startGame() {
     turnPlayer = turnQueue.front();
     turnQueue.pop_front();
-    //netAdmin.sendWhoNext(turnPlayer);
 }
-
-
-/*void Server::doCommand(string command) {
-    vector<string> com = splitter::split(' ', 100, command);
-
-    tuple<int, int, int> pos;
-    Player* player ;
-    pair<int, int> tmpos;
-    string nameP = com[0];
-    if (com[1] == "move") {
-
-    }
-
-    if (com[0] == "kill") {
-        killPlayer(com[1]);
-    } else if (com[0] == "give") {
-        pos = field->findPlayer(com[1]);
-        player = static_cast<Player*>(field->cell[get<0>(pos)][get<1>(pos)][get<2>(pos)]);
-        player->items.push_back(*static_cast<Item*>(objectFactory.createItem(stoi(com[2]))));
-        //netAdmin.sendResultOfTurn(com[1], "dig", "1 item " + com[2], "Server");
-    } else if (com[0] == "stat") {
-        pos = field->findPlayer(com[1]);
-        player = static_cast<Player*>(field->cell[get<0>(pos)][get<1>(pos)][get<2>(pos)]);
-        commandLog.push_back(player->tostring());
-        commandLog.push_back("           position = " + to_string(get<0>(pos)) + " " + to_string(get<1>(pos)));
-    } else if (com[0] == "set_turn") {
-        turnQueue.push_back(turnPlayer);
-        turnPlayer = com[1];
-        //netAdmin.sendWhoNext(com[1]);
-    } else if (com[0] == "add") {
-        tmpos = make_pair(stoi(com[1]), stoi(com[2]));
-        if (com[3] == "trap") {
-            int ololo = stoi(com[4]);
-            Trap* tt = static_cast<Trap*>(objectFactory.createTrap(ololo));
-            field->addObject(tmpos.first, tmpos.second, tt);
-        } else if (com[3] == "treasure"){
-            if (com[4] == "trap") {
-                field->addObject(tmpos.first, tmpos.second, new Treasure(*static_cast<Trap*>(objectFactory.createTrap(stoi(com[5])))));
-            } else if (com[4] == "item") {
-                field->addObject(tmpos.first, tmpos.second, new Treasure(*static_cast<Item*>(objectFactory.createItem(stoi(com[5])))));
-            }
-        }
-    } else if (com[0] == "get") {
-        tmpos = make_pair(stoi(com[1]), stoi(com[2]));
-        for (auto obj : field->cell[tmpos.first][tmpos.second]) {
-            commandLog.push_back(obj->tostring());
-        }
-    } else if (com[0] == "get_wall") {
-        tmpos = make_pair(stoi(com[1]), stoi(com[2]));
-        commandLog.push_back(field->getWall(tmpos.first, tmpos.second, Direction(com[3])));
-    } else if (com[0] == "add_wall") {
-        tmpos = make_pair(stoi(com[1]), stoi(com[2]));
-        field->addWall(tmpos.first, tmpos.second, Direction(com[3]), com[4]);
-    } else if (com[0] == "do") {
-        for (int i  = 2; i < com.size(); i++) {
-            com[1] += " " + com[i];
-        }
-        doTurn(com[1], turnPlayer);
-    }
-}*/
-
-
-/*function OnGUI() {
-    if (isConsoleOpen) {
-        GUI.Window(1488, new Rect(0, 0, Screen.width, Screen.height / 3), console, "Server Console", consoleStyle);
-    }
-    if (Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.BackQuote) {
-        isConsoleOpen = !isConsoleOpen;
-    }
-}
-
-function console(windowID : int) {
-    scrollPosition = GUILayout.BeginScrollView (scrollPosition, GUILayout.MaxHeight(Screen.height / 3 - 20));
-        var text : String = "";
-        for (var com : String in commandLog)
-            text += com + '\n';
-        GUILayout.Label(text);
-    GUILayout.EndScrollView();
-
-    GUI.SetNextControlName ("cmd");
-    command = GUI.TextField(new Rect(0, Screen.height / 3 - 20, Screen.width, 20), command);
-    GUI.FocusControl ("cmd");
-    if (Event.current.isKey && Event.current.keyCode == KeyCode.Return &&
-            GUI.GetNameOfFocusedControl () == "cmd" && command != "") {
-        commandLog.Add(">>>" + command);
-        scrollPosition.y = 10000000;
-        doCommand(command);
-        command = "";
-    }
-}*/
-
 
 

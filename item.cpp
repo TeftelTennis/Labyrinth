@@ -9,28 +9,16 @@ string Item::tostring() {
     return "item: " + name;
 }
 
-
-//infoWindow = [](int windowID) {
-//    GUILayout.Label("--EMPTY--");
-//};
 void Item::hitPlayer(Player& player, Labyrinth* field) {}
 void Item::useaa(Player& player, Labyrinth* field) {}
 bool Item::hitWall(Direction direction) {return false;}
 
 Item::Item() {
-    //image = new Texture();
     name = "empty";
     itemType = ITEM_TYPE_EMPTY;
     type = TYPE_ITEM;
 }
 
-//ArmorPiercingBullet::ArmorPiercingBullet() {
-//    super();
-//}
-
-//Flower::Flower() {
-//    super();
-//}
 
 void Bullet::hitPlayer(Player& player, Labyrinth* field) {
     player.life--;
@@ -38,7 +26,6 @@ void Bullet::hitPlayer(Player& player, Labyrinth* field) {
 }
 
 Bullet::Bullet() {
-    //image = AssetDatabase.LoadAssetAtPath("Assets/Textures/18040.jpg", typeof(Texture)) as Texture;
     itemType = ITEM_TYPE_BULLET;
     name = "bullet";
 }

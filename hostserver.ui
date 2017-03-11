@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>447</width>
     <height>341</height>
    </rect>
   </property>
@@ -244,79 +244,38 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>200</number>
+        </property>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_5">
-                <item>
-                 <widget class="QCheckBox" name="treasureTogether">
-                  <property name="text">
-                   <string>Can put treasures together</string>
-                  </property>
-                  <property name="checked">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="randomTreasure">
-                  <property name="text">
-                   <string>Random Treasure</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Keys:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="keysSpinbox"/>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <property name="leftMargin">
-             <number>30</number>
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Bullets:</string>
             </property>
-            <property name="rightMargin">
-             <number>30</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QLabel" name="label_9">
-                <property name="text">
-                 <string>Keys:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="keysSpinbox"/>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="label_10">
-                <property name="text">
-                 <string>Bullets:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="bulletsSpinbox"/>
-              </item>
-             </layout>
-            </item>
-           </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="bulletsSpinbox"/>
           </item>
          </layout>
         </item>
@@ -422,6 +381,9 @@
   <zorder>pushButton</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
+  <zorder></zorder>
+  <zorder></zorder>
+  <zorder></zorder>
  </widget>
  <resources/>
  <connections>

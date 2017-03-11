@@ -1,13 +1,12 @@
 #include "gamelog.h"
 
 
-void GameLog::addObject(LabyrinthObject a) {  //тут вроде LabyrinthObject надо
+void GameLog::addObject(LabyrinthObject a) {
     cell[iCur][jCur].push_back(&a);
 }
 
 GameLog::GameLog(string name,int w, int h, int ammo, int life, bool border, int i, int j) : Labyrinth(w, h) {
     player = Player(name, ammo, life);
-    //тут было super(w, h)
     iStart = i;
     jStart = j;
     iCur = i;

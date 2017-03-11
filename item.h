@@ -20,26 +20,12 @@ public:
 
     int itemType;
     string tostring();
-    //virtual void infoWindow (int windowID);
     virtual void hitPlayer (Player& player, Labyrinth* field);
     virtual bool hitWall(Direction direction);
     virtual void useaa(Player& player, Labyrinth* field);
 
-    //Texture image;
 
     Item();
-};
-
-class ArmorPiercingBullet : public Item {
-public:
-    //TODO:
-    ArmorPiercingBullet();
-};
-
-class Flower : public Item {
-public:
-    //TODO:
-    Flower();
 };
 
 class Bullet : public Item {

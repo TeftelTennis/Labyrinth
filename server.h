@@ -30,10 +30,8 @@ public:
 
     Server(ServerData serverData);
 
-    //Вход выход игроков
+    //Вход игроков
     void killPlayer(string name);
-
-    void OnPlayerDisconnected ();
 
     void addPlayer(int i, int j, string nameP);
 
@@ -47,12 +45,6 @@ public:
     string doTurn(string turn);
 
     void startGame();
-
-    //void doCommand(string command);
-
-    void OnGUI();
-
-    void console(int windowID);
 
 };
 

@@ -25,9 +25,8 @@ void HostServer::on_menuButton_clicked()
 
 void HostServer::on_pushButton_clicked()
 {
-    //TODO: Host server
     ServerData serverData = ServerData(getWidth(), getHeight(), getStartAmmo(),
-                                       getStartLifes(), getKeys(), getBullets(), 0,
+                                       getStartLifes(), getKeys(), getBullets(),
                                        getWallProb(), getStaticTreasureProb(), getLoveToiletsProb(),
                                                                 canPutTreasureTogether(), useRandomTreasure());
     GameWindow *game = new GameWindow(this);
@@ -72,9 +71,6 @@ int HostServer::getBullets() {
     return ui->bulletsSpinbox->value();
 }
 
-//int HostServer::getMines() {
-//    return ui->minesSpinbox->value();
-//}
 
 float HostServer::getWallProb() {
     return static_cast<double>(ui->wallProb->value()) / 100;
@@ -89,11 +85,11 @@ float HostServer::getLoveToiletsProb() {
 }
 
 bool HostServer::canPutTreasureTogether() {
-    return ui->treasureTogether->isChecked();
+    return false;
 }
 
 bool HostServer::useRandomTreasure() {
-    return ui->randomTreasure->isChecked();
+    return false;
 }
 
 string HostServer::getName() {

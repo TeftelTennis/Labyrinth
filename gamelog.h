@@ -1,12 +1,12 @@
 #include "labyrinth.h"
 
+
 #ifndef GAMELOG_H
 #define GAMELOG_H
 
 
 class GameLog : public Labyrinth {\
 public:
-    //GameLog previousVersion;//Если ловушка переместила тебя.
     Player player;
 
     vector<Direction> turn;
